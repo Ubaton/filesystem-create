@@ -26,7 +26,7 @@ const Navigation = () => {
 
         <nav className="flex items-center space-x-4">
           <Link
-            href="https://github.com/yourusername/file-structure-generator"
+            href="https://github.com/Ubaton"
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors">
@@ -35,7 +35,7 @@ const Navigation = () => {
           </Link>
 
           <Link
-            href="https://twitter.com/yourusername"
+            href="https://x.com/_GoldManRay"
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors">
