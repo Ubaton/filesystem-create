@@ -230,13 +230,13 @@ const FileStructureGenerator = () => {
               onChange={(e) => setInput(e.target.value)}
               placeholder="src/
   pages/
-    index.js
-    about.ts
+    index
+    about
   components/
-    Header.jsx
-    Footer.tsx
+    Header
+    Footer
   api/
-    users.js"
+    users"
             />
           </div>
           <div>
