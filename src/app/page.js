@@ -3,7 +3,7 @@ import FileStructureGenerator from "../components/FileStructureGenerator/Generat
 
 export default function Home() {
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center min-h-screen">
       <FileStructureGenerator />
     </div>
   );

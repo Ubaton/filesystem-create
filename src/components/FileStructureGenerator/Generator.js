@@ -7,6 +7,7 @@ import {
   ChevronDown,
   ChevronRight,
   Download,
+  Copy,
 } from "lucide-react";
 import JSZip from "jszip";
 import FileSaver from "file-saver";
@@ -19,10 +20,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
+import toast from "react-hot-toast";
 
 const FileTypes = {
   JS: ".js",
@@ -209,9 +220,29 @@ const FileStructureGenerator = () => {
     FileSaver.saveAs(content, "file-structure.zip");
   };
 
+  const copyToClipboard = async () => {
+    const exampleText = `src/
+  pages/
+    index
+    about
+  components/
+    Header
+    Footer
+  api/
+    users`;
+
+    try {
+      await navigator.clipboard.writeText(exampleText);
+      toast.success("Example copied to clipboard");
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+      toast.error("Failed to copy example to clipboard");
+    }
+  };
+
   return (
-    <div className="container mx-auto p-4 max-w-4xl">
-      <Card>
+    <div className="container mx-auto min-h-screen py-8  max-w-4xl">
+      <Card className="rounded-bl-none">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
             File Structure Generator
@@ -285,6 +316,45 @@ const FileStructureGenerator = () => {
           )}
         </CardContent>
       </Card>
+      <Dialog>
+        <DialogTrigger className="rounded-t-none rounded-b-md bg-black text-white border border-zinc-700 shadow-md py-1 px-2 font-semibold">
+          Copy Example
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Example</DialogTitle>
+            <DialogDescription>
+              <p className="mb-6">
+                Copy the example below to your clipboard and paste it into the
+                input field.
+              </p>
+              <div className="relative">
+                <pre className="p-2 border border-zinc-700 rounded-lg">
+                  <code className="text-sm">
+                    src/ <br />
+                    {"  "}pages/ <br />
+                    {"    "}index <br />
+                    {"    "}about <br />
+                    {"  "}components/ <br />
+                    {"    "}Header <br />
+                    {"    "}Footer <br />
+                    {"  "}api/ <br />
+                    {"    "}users
+                  </code>
+                </pre>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="absolute top-2 right-2"
+                  onClick={copyToClipboard}
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
