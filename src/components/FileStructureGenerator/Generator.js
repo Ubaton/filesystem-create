@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Folder,
   FileCode,
@@ -21,6 +21,8 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
 
 const FileTypes = {
   JS: ".js",
@@ -34,6 +36,51 @@ const FileStructureGenerator = () => {
   const [defaultFileType, setDefaultFileType] = useState("JS");
   const [structure, setStructure] = useState(null);
   const [expandedNodes, setExpandedNodes] = useState({});
+
+  useEffect(() => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: "#input-area",
+          popover: {
+            title: "Input Area",
+            description: "Enter your file structure here",
+          },
+        },
+        {
+          element: "#file-type-select",
+          popover: {
+            title: "File Type",
+            description: "Select the default file type",
+          },
+        },
+        {
+          element: "#generate-btn",
+          popover: {
+            title: "Generate",
+            description: "Click to generate the file structure",
+          },
+        },
+        {
+          element: "#download-btn",
+          popover: {
+            title: "Download",
+            description: "Download the generated structure as a ZIP file",
+          },
+        },
+        {
+          element: "#structure-display",
+          popover: {
+            title: "Structure Display",
+            description: "View the generated file structure here",
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
+  }, []);
 
   const toggleNode = (nodePath) => {
     setExpandedNodes((prev) => ({
@@ -106,7 +153,8 @@ const FileStructureGenerator = () => {
                 variant="ghost"
                 size="sm"
                 className="p-0 h-6 w-6"
-                onClick={() => toggleNode(path)}>
+                onClick={() => toggleNode(path)}
+              >
                 {isExpanded ? (
                   <ChevronDown className="h-4 w-4" />
                 ) : (
@@ -176,6 +224,7 @@ const FileStructureGenerator = () => {
               indentation):
             </label>
             <Textarea
+              id="input-area"
               className="min-h-[200px]"
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -194,7 +243,11 @@ const FileStructureGenerator = () => {
             <label className="block mb-2 text-sm font-medium text-foreground">
               Select default file type (for files without extensions):
             </label>
-            <Select value={defaultFileType} onValueChange={setDefaultFileType}>
+            <Select
+              id="file-type-select"
+              value={defaultFileType}
+              onValueChange={setDefaultFileType}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select a file type" />
               </SelectTrigger>
@@ -208,16 +261,18 @@ const FileStructureGenerator = () => {
             </Select>
           </div>
           <div className="flex justify-center space-x-4">
-            <Button onClick={generateStructure}>Generate Structure</Button>
+            <Button id="generate-btn" onClick={generateStructure}>
+              Generate Structure
+            </Button>
             {structure && (
-              <Button variant="outline" onClick={generateZip}>
+              <Button id="download-btn" variant="outline" onClick={generateZip}>
                 <Download className="mr-2 h-4 w-4" />
                 Download ZIP
               </Button>
             )}
           </div>
           {structure && (
-            <div>
+            <div id="structure-display">
               <h2 className="text-xl font-semibold mb-2">
                 Generated Structure:
               </h2>
