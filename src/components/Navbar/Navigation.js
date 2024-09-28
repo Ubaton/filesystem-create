@@ -22,7 +22,7 @@ const Navigation = () => {
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <FileCode2 className="h-6 w-6 text-primary" />
-          <h1 className="text-lg font-semibold">File Structure Generator</h1>
+          <h1 className="hidden lg:block text-lg font-semibold">File Structure Generator</h1>
         </div>
 
         <nav className="flex items-center space-x-4">
