@@ -100,6 +100,42 @@ const FileStructureGenerator = () => {
     }));
   };
 
+  const generateBoilerplate = (name, fileType) => {
+    const componentName = name.split(".")[0];
+    switch (fileType) {
+      case "JS":
+      case "JSX":
+        return `import React from 'react';
+
+const ${componentName} = () => {
+  return (
+    <div>
+      <h1>${componentName} Component</h1>
+    </div>
+  );
+};
+
+export default ${componentName};`;
+      case "TS":
+      case "TSX":
+        return `import React from 'react';
+
+interface ${componentName}Props {}
+
+const ${componentName}: React.FC<${componentName}Props> = () => {
+  return (
+    <div>
+      <h1>${componentName} Component</h1>
+    </div>
+  );
+};
+
+export default ${componentName};`;
+      default:
+        return "";
+    }
+  };
+
   const generateStructure = () => {
     const lines = input.split("\n").filter((line) => line.trim() !== "");
     const root = { name: "root", children: [], type: "folder" };
@@ -210,7 +246,8 @@ const FileStructureGenerator = () => {
         const filePath = currentPath
           ? `${currentPath}/${node.name}`
           : node.name;
-        zip.file(filePath, "");
+        const fileContent = generateBoilerplate(node.name, node.fileType);
+        zip.file(filePath, fileContent);
       }
     };
 
