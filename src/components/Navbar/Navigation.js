@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { Badge } from "../ui/badge";
 
 const Navigation = () => {
   const { setTheme, theme } = useTheme();
@@ -25,11 +26,15 @@ const Navigation = () => {
         </div>
 
         <nav className="flex items-center space-x-4">
+          <Badge variant="outline" className="text-sm text-muted-foreground">
+            v0.2.0
+          </Badge>
           <Link
             href="https://github.com/Ubaton"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
             <Github className="h-5 w-5" />
             <span className="sr-only">GitHub repository</span>
           </Link>
@@ -38,7 +43,8 @@ const Navigation = () => {
             href="https://x.com/_GoldManRay"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
             <Twitter className="h-5 w-5" />
             <span className="sr-only">Twitter profile</span>
           </Link>
@@ -52,7 +58,8 @@ const Navigation = () => {
                     rotate: theme === "dark" ? -90 : 0,
                     scale: theme === "dark" ? 0 : 1,
                   }}
-                  transition={{ duration: 0.3 }}>
+                  transition={{ duration: 0.3 }}
+                >
                   <Sun className="h-5 w-5" />
                 </motion.div>
                 <motion.div
@@ -62,7 +69,8 @@ const Navigation = () => {
                     scale: theme === "dark" ? 1 : 0,
                   }}
                   transition={{ duration: 0.3 }}
-                  className="absolute">
+                  className="absolute"
+                >
                   <Moon className="h-5 w-5" />
                 </motion.div>
                 <span className="sr-only">Toggle theme</span>
