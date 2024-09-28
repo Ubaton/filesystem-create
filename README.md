@@ -2,7 +2,7 @@
 
 This project is a File Structure Generator built with Next.js and React. It allows users to create and visualize file structures, and generate downloadable ZIP files based on the input.
 
-![File Structure Generator]()
+![File Structure Generator](src/public/images/FSG.png)
 
 ## Features
 
