@@ -24,8 +24,8 @@ const Hero = () => {
               Generate File Structures with Ease
             </h1>
             <p className="mx-auto max-w-[700px]  md:text-xl bg-gradient-to-bl from-pink-400 to-violet-500 bg-clip-text text-transparent">
-              Create, visualize, and download your project&apos;'s file structure in
-              seconds. Perfect for developers and project managers.
+              Create, visualize, and download your project&apos;s file structure
+              in seconds. Perfect for developers and project managers.
             </p>
           </div>
           <div className="space-x-4">
