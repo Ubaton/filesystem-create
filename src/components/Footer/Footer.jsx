@@ -29,8 +29,11 @@ export default function Footer() {
                 priority={true}
               />
 
-              <h1 className="hidden lg:block text-lg font-semibold">
-                File<span className="tex-ble">Gen</span>
+              <h1 className="text-lg font-semibold">
+                File
+                <span className="bg-gradient-to-bl from-pink-400 to-violet-500 bg-clip-text text-transparent">
+                  Gen
+                </span>
               </h1>
             </div>
           </Link>
