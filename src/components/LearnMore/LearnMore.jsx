@@ -47,11 +47,11 @@ const LearnMore = () => {
                   Select the default file type for files without extensions.
                 </li>
                 <li>
-                  Click &lsquo;Generate Structure&lsquo; to visualize the file
+                  Click &quot;Generate Structure&quot; to visualize the file
                   structure.
                 </li>
                 <li>
-                  Optionally, click "Download ZIP" to get a ZIP file of the
+                  Optionally, click &quot;Download ZIP&quot;to get a ZIP file of the
                   structure.
                 </li>
               </ol>
