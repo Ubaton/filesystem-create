@@ -1,5 +1,12 @@
 import React from "react";
-import { Heart } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
+import FileGen from "../../public/assets/GrayFIleGen.png";
+
+const imageAsset = {
+  name: "File Structure Generator",
+  image: FileGen,
+};
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -7,18 +14,26 @@ export default function Footer() {
   return (
     <footer className="border-t">
       <div className="container mx-auto px-4 py-6">
-        <div className="flex flex-col items-center justify-center space-y-2">
-          <p className="text-sm text-muted-foreground">
-            Created by Raymond Ngobeni
-          </p>
-          <div className="flex items-center space-x-1">
-            <span className="text-sm text-muted-foreground">Made with</span>
-            <Heart className="h-4 w-4 text-red-500" />
-            <span className="text-sm text-muted-foreground">and Code</span>
-          </div>
+        <div className="flex items-center justify-between space-y-2">
           <p className="text-xs text-muted-foreground mt-2">
             &copy; {currentYear} Raymond Ngobeni. All rights reserved.
           </p>
+
+          <Link href={"/"}>
+            <div className="flex items-center space-x-1">
+              <Image
+                src={imageAsset.image}
+                alt={imageAsset.name}
+                width={40}
+                height={40}
+                priority={true}
+              />
+
+              <h1 className="hidden lg:block text-lg font-semibold">
+                File<span className="tex-ble">Gen</span>
+              </h1>
+            </div>
+          </Link>
         </div>
       </div>
     </footer>

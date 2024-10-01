@@ -28,12 +28,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
+import { DotPattern } from "@/components/ui/dot-pattern";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 import toast from "react-hot-toast";
+import { motion, AnimatePresence } from "framer-motion";
 
 const FileTypes = {
   JS: ".js",
@@ -192,7 +195,14 @@ export default ${componentName};`;
     const isExpanded = expandedNodes[path] || false;
 
     return (
-      <div key={node.name} className="ml-4">
+      <motion.div
+        key={node.name}
+        className="ml-4"
+        initial={{ opacity: 0, height: 0 }}
+        animate={{ opacity: 1, height: "auto" }}
+        exit={{ opacity: 0, height: 0 }}
+        transition={{ duration: 0.3 }}
+      >
         <div className="flex items-center py-1 hover:bg-accent rounded transition-colors">
           {node.type === "folder" ? (
             <>
@@ -202,11 +212,13 @@ export default ${componentName};`;
                 className="p-0 h-6 w-6"
                 onClick={() => toggleNode(path)}
               >
-                {isExpanded ? (
-                  <ChevronDown className="h-4 w-4" />
-                ) : (
+                <motion.div
+                  initial={false}
+                  animate={{ rotate: isExpanded ? 90 : 0 }}
+                  transition={{ duration: 0.2 }}
+                >
                   <ChevronRight className="h-4 w-4" />
-                )}
+                </motion.div>
               </Button>
               <Folder className="h-4 w-4 text-yellow-500 mr-1" />
             </>
@@ -222,14 +234,22 @@ export default ${componentName};`;
             </span>
           )}
         </div>
-        {node.type === "folder" && isExpanded && (
-          <div className="ml-4">
-            {node.children.map((child) =>
-              renderStructure(child, level + 1, `${path}/${child.name}`)
-            )}
-          </div>
-        )}
-      </div>
+        <AnimatePresence>
+          {node.type === "folder" && isExpanded && (
+            <motion.div
+              className="ml-4"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              {node.children.map((child) =>
+                renderStructure(child, level + 1, `${path}/${child.name}`)
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
     );
   };
 
@@ -278,25 +298,26 @@ export default ${componentName};`;
   };
 
   return (
-    <div className="container mx-auto min-h-screen py-8  max-w-4xl">
-      <Card className="rounded-bl-none">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">
-            File Structure Generator
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div>
-            <label className="block mb-2 text-sm font-medium text-foreground">
-              Enter file structure (one item per line, use spaces for
-              indentation):
-            </label>
-            <Textarea
-              id="input-area"
-              className="min-h-[200px]"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="src/
+    <div className="relative flex size-full items-center justify-center overflow-hidden rounded-lg border bg-background md:shadow-xl">
+      <div className="container mx-auto min-h-screen py-8  max-w-4xl">
+        <Card className="rounded-bl-none">
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold text-center">
+              File Structure Generator
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div>
+              <label className="block mb-2 text-sm font-medium text-foreground">
+                Enter file structure (one item per line, use spaces for
+                indentation):
+              </label>
+              <Textarea
+                id="input-area"
+                className="min-h-[200px]"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="src/
   pages/
     index
     about
@@ -305,93 +326,108 @@ export default ${componentName};`;
     Footer
   api/
     users"
-            />
-          </div>
-          <div>
-            <label className="block mb-2 text-sm font-medium text-foreground">
-              Select default file type (for files without extensions):
-            </label>
-            <Select
-              id="file-type-select"
-              value={defaultFileType}
-              onValueChange={setDefaultFileType}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select a file type" />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(FileTypes).map(([key, value]) => (
-                  <SelectItem key={key} value={key}>
-                    {value}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex justify-center space-x-4">
-            <Button id="generate-btn" onClick={generateStructure}>
-              Generate Structure
-            </Button>
-            {structure && (
-              <Button id="download-btn" variant="outline" onClick={generateZip}>
-                <Download className="mr-2 h-4 w-4" />
-                Download ZIP
-              </Button>
-            )}
-          </div>
-          {structure && (
-            <div id="structure-display">
-              <h2 className="text-xl font-semibold mb-2">
-                Generated Structure:
-              </h2>
-              <Card>
-                <ScrollArea className="h-[300px] w-full rounded-md border p-4">
-                  {renderStructure(structure)}
-                </ScrollArea>
-              </Card>
+              />
             </div>
-          )}
-        </CardContent>
-      </Card>
-      <Dialog>
-        <DialogTrigger className="rounded-t-none rounded-b-md bg-black text-white border border-zinc-700 shadow-md py-1 px-2 font-semibold">
-          Copy Example
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Example</DialogTitle>
-            <DialogDescription>
-              <p className="mb-6">
-                Copy the example below to your clipboard and paste it into the
-                input field.
-              </p>
-              <div className="relative">
-                <pre className="p-2 border border-zinc-700 rounded-lg">
-                  <code className="text-sm">
-                    src/ <br />
-                    {"  "}pages/ <br />
-                    {"    "}index <br />
-                    {"    "}about <br />
-                    {"  "}components/ <br />
-                    {"    "}Header <br />
-                    {"    "}Footer <br />
-                    {"  "}api/ <br />
-                    {"    "}users
-                  </code>
-                </pre>
+            <div>
+              <label className="block mb-2 text-sm font-medium text-foreground">
+                Select default file type (for files without extensions):
+              </label>
+              <Select
+                id="file-type-select"
+                value={defaultFileType}
+                onValueChange={setDefaultFileType}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a file type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(FileTypes).map(([key, value]) => (
+                    <SelectItem key={key} value={key}>
+                      {value}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex justify-center space-x-4">
+              <Button id="generate-btn" onClick={generateStructure}>
+                Generate Structure
+              </Button>
+              {structure && (
                 <Button
-                  variant="ghost"
-                  size="sm"
-                  className="absolute top-2 right-2"
-                  onClick={copyToClipboard}
+                  id="download-btn"
+                  variant="outline"
+                  onClick={generateZip}
                 >
-                  <Copy className="h-4 w-4" />
+                  <Download className="mr-2 h-4 w-4" />
+                  Download ZIP
                 </Button>
+              )}
+            </div>
+            {structure && (
+              <div id="structure-display">
+                <h2 className="text-xl font-semibold mb-2">
+                  Generated Structure:
+                </h2>
+                <Card>
+                  <ScrollArea className="h-[300px] w-full rounded-md border p-4">
+                    {renderStructure(structure)}
+                  </ScrollArea>
+                </Card>
               </div>
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
+            )}
+          </CardContent>
+        </Card>
+        <Dialog>
+          <DialogTrigger className="rounded-t-none rounded-b-md bg-black text-white border border-zinc-700 shadow-md py-1 px-2 font-semibold">
+            Copy Example
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Example</DialogTitle>
+              <DialogDescription>
+                <p className="mb-6">
+                  Copy the example below to your clipboard and paste it into the
+                  input field.
+                </p>
+                <div className="relative">
+                  <pre className="p-2 border border-zinc-700 rounded-lg">
+                    <code className="text-sm">
+                      src/ <br />
+                      {"  "}pages/ <br />
+                      {"    "}index <br />
+                      {"    "}about <br />
+                      {"  "}components/ <br />
+                      {"    "}Header <br />
+                      {"    "}Footer <br />
+                      {"  "}api/ <br />
+                      {"    "}users
+                    </code>
+                  </pre>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="absolute top-2 right-2"
+                    onClick={copyToClipboard}
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </div>
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
+      </div>
+      <DotPattern
+        width={20}
+        height={20}
+        cx={1}
+        cy={1}
+        cr={1}
+        className={cn(
+          "[mask-image:linear-gradient(to_bottom_right,white,transparent,transparent)] "
+        )}
+      />
     </div>
   );
 };
