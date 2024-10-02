@@ -5,6 +5,7 @@ import { RainbowButton } from "../ui/rainbow-button";
 import { Badge } from "../ui/badge";
 import { cn } from "@/lib/utils";
 import AnimatedShinyText from "@/components/ui/animated-shiny-text";
+import WordRotate from "@/components/ui/word-rotate";
 
 const Hero = () => {
   return (
@@ -21,7 +22,11 @@ const Hero = () => {
           </Badge>
           <div className="space-y-2">
             <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none lg:max-w-2xl">
-              Generate File Structures with Ease
+              Generate File Structures with
+              <WordRotate
+                className="text-4xl font-bold text-black dark:text-white"
+                words={["Ease", "Speed", "Precision", "Flexibility"]}
+              />
             </h1>
             <p className="mx-auto max-w-[700px]  md:text-xl bg-gradient-to-bl from-pink-400 to-violet-500 bg-clip-text text-transparent">
               Create, visualize, and download your project&apos;s file structure

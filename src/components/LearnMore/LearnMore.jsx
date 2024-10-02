@@ -4,7 +4,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 const LearnMore = () => {
   return (
-    <div className="container mx-auto py-8 max-w-7xl h-screen">
+    <div className="container mx-auto py-8 max-w-7xl min-h-screen">
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
