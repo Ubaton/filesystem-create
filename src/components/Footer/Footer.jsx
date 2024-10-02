@@ -14,8 +14,8 @@ export default function Footer() {
   return (
     <footer className="border-t">
       <div className="container mx-auto px-4 py-6">
-        <div className="flex items-center justify-between space-y-2">
-          <p className="text-xs text-muted-foreground mt-2">
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-muted-foreground">
             &copy; {currentYear} Raymond Ngobeni. All rights reserved.
           </p>
 

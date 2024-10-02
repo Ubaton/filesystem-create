@@ -2,12 +2,24 @@
   "name": "filesystem-create",
   "version": "0.2.1",
   "private": true,
+  "bin": {
+    "filegen": "./bin/filegen.js"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [
+    "react",
+    "nextjs",
+    "generator",
+    "boilerplate"
+  ],
+  "author": "Raymond Ngobeni",
+  "license": "MIT",
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-dropdown-menu": "^2.1.1",

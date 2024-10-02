@@ -50,50 +50,58 @@ const FileStructureGenerator = () => {
   const [defaultFileType, setDefaultFileType] = useState("JS");
   const [structure, setStructure] = useState(null);
   const [expandedNodes, setExpandedNodes] = useState({});
+  const [hasSeenTutorial, setHasSeenTutorial] = useState(false);
 
   useEffect(() => {
-    const driverObj = driver({
-      showProgress: true,
-      steps: [
-        {
-          element: "#input-area",
-          popover: {
-            title: "Input Area",
-            description: "Enter your file structure here",
+    const hasSeenTutorialBefore = localStorage.getItem("hasSeenTutorial");
+    if (!hasSeenTutorialBefore) {
+      const driverObj = driver({
+        showProgress: true,
+        steps: [
+          {
+            element: "#input-area",
+            popover: {
+              title: "Input Area",
+              description: "Enter your file structure here",
+            },
           },
-        },
-        {
-          element: "#file-type-select",
-          popover: {
-            title: "File Type",
-            description: "Select the default file type",
+          {
+            element: "#file-type-select",
+            popover: {
+              title: "File Type",
+              description: "Select the default file type",
+            },
           },
-        },
-        {
-          element: "#generate-btn",
-          popover: {
-            title: "Generate",
-            description: "Click to generate the file structure",
+          {
+            element: "#generate-btn",
+            popover: {
+              title: "Generate",
+              description: "Click to generate the file structure",
+            },
           },
-        },
-        {
-          element: "#download-btn",
-          popover: {
-            title: "Download",
-            description: "Download the generated structure as a ZIP file",
+          {
+            element: "#download-btn",
+            popover: {
+              title: "Download",
+              description: "Download the generated structure as a ZIP file",
+            },
           },
-        },
-        {
-          element: "#structure-display",
-          popover: {
-            title: "Structure Display",
-            description: "View the generated file structure here",
+          {
+            element: "#structure-display",
+            popover: {
+              title: "Structure Display",
+              description: "View the generated file structure here",
+            },
           },
-        },
-      ],
-    });
+        ],
+      });
 
-    driverObj.drive();
+      driverObj.drive();
+      localStorage.setItem("hasSeenTutorial", "true");
+      setHasSeenTutorial(true);
+    } else {
+      setHasSeenTutorial(true);
+    }
   }, []);
 
   const toggleNode = (nodePath) => {
