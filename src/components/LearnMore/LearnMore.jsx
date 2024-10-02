@@ -4,7 +4,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 const LearnMore = () => {
   return (
-    <div className="container mx-auto py-8 max-w-4xl">
+    <div className="container mx-auto py-8 max-w-7xl h-screen">
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
@@ -12,7 +12,7 @@ const LearnMore = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          <ScrollArea className="h-[500px] w-full rounded-md border p-4">
+          <ScrollArea className="h-[700px] w-full rounded-md border p-4">
             <section>
               <h2 className="text-xl font-semibold mb-2">
                 What is File Structure Generator?
@@ -51,8 +51,8 @@ const LearnMore = () => {
                   structure.
                 </li>
                 <li>
-                  Optionally, click &quot;Download ZIP&quot;to get a ZIP file of the
-                  structure.
+                  Optionally, click &quot;Download ZIP&quot;to get a ZIP file of
+                  the structure.
                 </li>
               </ol>
             </section>
