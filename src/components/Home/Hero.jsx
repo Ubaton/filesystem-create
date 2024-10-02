@@ -24,7 +24,7 @@ const Hero = () => {
             <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none lg:max-w-2xl">
               Generate File Structures with
               <WordRotate
-                className="text-4xl font-bold text-black dark:text-white"
+                className="text-black dark:text-white"
                 words={["Ease", "Speed", "Precision", "Flexibility"]}
               />
             </h1>
