@@ -6,6 +6,7 @@ import { Badge } from "../ui/badge";
 import { cn } from "@/lib/utils";
 import AnimatedShinyText from "@/components/ui/animated-shiny-text";
 import WordRotate from "@/components/ui/word-rotate";
+import { MarqueeLogo } from "../MarqueeLogos/Logo";
 
 const Hero = () => {
   return (
@@ -47,6 +48,7 @@ const Hero = () => {
             </Button>
           </div>
         </div>
+        <MarqueeLogo />
       </div>
     </section>
   );
