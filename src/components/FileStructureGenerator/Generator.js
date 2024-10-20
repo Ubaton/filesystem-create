@@ -4,10 +4,11 @@ import React, { useState, useEffect } from "react";
 import {
   Folder,
   FileCode,
-  ChevronDown,
   ChevronRight,
   Download,
   Copy,
+  RefreshCw,
+  Info,
 } from "lucide-react";
 import JSZip from "jszip";
 import FileSaver from "file-saver";
@@ -28,15 +29,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { cn } from "@/lib/utils";
-import { DotPattern } from "@/components/ui/dot-pattern";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { driver } from "driver.js";
-import "driver.js/dist/driver.css";
-import toast from "react-hot-toast";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTheme } from "next-themes";
+import { toast } from "sonner";
 
 const FileTypes = {
   JS: ".js",
@@ -45,62 +48,18 @@ const FileTypes = {
   TSX: ".tsx",
 };
 
-const FileStructureGenerator = () => {
+export default function FileStructureGenerator() {
   const [input, setInput] = useState("");
   const [defaultFileType, setDefaultFileType] = useState("JS");
   const [structure, setStructure] = useState(null);
   const [expandedNodes, setExpandedNodes] = useState({});
-  const [hasSeenTutorial, setHasSeenTutorial] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const { theme } = useTheme();
 
   useEffect(() => {
-    const hasSeenTutorialBefore = localStorage.getItem("hasSeenTutorial");
-    if (!hasSeenTutorialBefore) {
-      const driverObj = driver({
-        showProgress: true,
-        steps: [
-          {
-            element: "#input-area",
-            popover: {
-              title: "Input Area",
-              description: "Enter your file structure here",
-            },
-          },
-          {
-            element: "#file-type-select",
-            popover: {
-              title: "File Type",
-              description: "Select the default file type",
-            },
-          },
-          {
-            element: "#generate-btn",
-            popover: {
-              title: "Generate",
-              description: "Click to generate the file structure",
-            },
-          },
-          {
-            element: "#download-btn",
-            popover: {
-              title: "Download",
-              description: "Download the generated structure as a ZIP file",
-            },
-          },
-          {
-            element: "#structure-display",
-            popover: {
-              title: "Structure Display",
-              description: "View the generated file structure here",
-            },
-          },
-        ],
-      });
-
-      driverObj.drive();
-      localStorage.setItem("hasSeenTutorial", "true");
-      setHasSeenTutorial(true);
-    } else {
-      setHasSeenTutorial(true);
+    const savedStructure = localStorage.getItem("fileStructure");
+    if (savedStructure) {
+      setInput(savedStructure);
     }
   }, []);
 
@@ -148,6 +107,7 @@ export default ${componentName};`;
   };
 
   const generateStructure = () => {
+    setIsGenerating(true);
     const lines = input.split("\n").filter((line) => line.trim() !== "");
     const root = { name: "root", children: [], type: "folder" };
     const stack = [root];
@@ -197,6 +157,9 @@ export default ${componentName};`;
     });
 
     setStructure(root);
+    // localStorage.setItem("fileStructure", input);
+    setIsGenerating(false);
+    toast.success("File structure generated successfully!");
   };
 
   const renderStructure = (node, level = 0, path = "root") => {
@@ -283,6 +246,7 @@ export default ${componentName};`;
 
     const content = await zip.generateAsync({ type: "blob" });
     FileSaver.saveAs(content, "file-structure.zip");
+    toast.success("ZIP file downloaded successfully!");
   };
 
   const copyToClipboard = async () => {
@@ -306,26 +270,25 @@ export default ${componentName};`;
   };
 
   return (
-    <div className="relative flex size-full items-center justify-center overflow-hidden rounded-lg border bg-background md:shadow-xl">
-      <div className="container mx-auto min-h-screen py-8  max-w-4xl">
-        <Card className="rounded-bl-none">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold text-center">
-              File Structure Generator
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div>
-              <label className="block mb-2 text-sm font-medium text-foreground">
-                Enter file structure (one item per line, use spaces for
-                indentation):
-              </label>
-              <Textarea
-                id="input-area"
-                className="min-h-[200px]"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="src/
+    <div className="container mx-auto py-8 max-w-4xl min-h-screen">
+      <Card className="bg-card">
+        <CardHeader>
+          <CardTitle className="text-3xl font-bold text-center">
+            File Structure Generator
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div>
+            <label className="block mb-2 text-sm font-medium text-foreground">
+              Enter file structure (one item per line, use spaces for
+              indentation):
+            </label>
+            <Textarea
+              id="input-area"
+              className="min-h-[200px] font-mono"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="src/
   pages/
     index
     about
@@ -334,110 +297,139 @@ export default ${componentName};`;
     Footer
   api/
     users"
-              />
-            </div>
-            <div>
+            />
+          </div>
+          <div className="flex items-center space-x-4">
+            <div className="flex-grow">
               <label className="block mb-2 text-sm font-medium text-foreground">
-                Select default file type (for files without extensions):
+                Select default file type:
               </label>
-              <Select
-                id="file-type-select"
-                value={defaultFileType}
-                onValueChange={setDefaultFileType}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a file type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.entries(FileTypes).map(([key, value]) => (
-                    <SelectItem key={key} value={key}>
-                      {value}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex justify-center space-x-4">
-              <Button id="generate-btn" onClick={generateStructure}>
-                Generate Structure
-              </Button>
-              {structure && (
-                <Button
-                  id="download-btn"
-                  variant="outline"
-                  onClick={generateZip}
+              <div className="flex space-x-4">
+                <Select
+                  id="file-type-select"
+                  value={defaultFileType}
+                  onValueChange={setDefaultFileType}
                 >
-                  <Download className="mr-2 h-4 w-4" />
-                  Download ZIP
-                </Button>
-              )}
-            </div>
-            {structure && (
-              <div id="structure-display">
-                <h2 className="text-xl font-semibold mb-2">
-                  Generated Structure:
-                </h2>
-                <Card>
-                  <ScrollArea className="h-[300px] w-full rounded-md border p-4">
-                    {renderStructure(structure)}
-                  </ScrollArea>
-                </Card>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a file type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(FileTypes).map(([key, value]) => (
+                      <SelectItem key={key} value={key}>
+                        {value}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => setInput("")}
+                      >
+                        <RefreshCw className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Clear input</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
+            </div>
+          </div>
+          <div className="flex justify-center space-x-4">
+            <Button
+              id="generate-btn"
+              onClick={generateStructure}
+              disabled={isGenerating}
+            >
+              {isGenerating ? (
+                <>
+                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                "Generate Structure"
+              )}
+            </Button>
+            {structure && (
+              <Button id="download-btn" variant="outline" onClick={generateZip}>
+                <Download className="mr-2 h-4 w-4" />
+                Download ZIP
+              </Button>
             )}
-          </CardContent>
-        </Card>
-        <Dialog>
-          <DialogTrigger className="rounded-t-none rounded-b-md bg-black text-white border border-zinc-700 shadow-md py-1 px-2 font-semibold">
+          </div>
+          {structure && (
+            <div id="structure-display">
+              <h2 className="text-xl font-semibold mb-2 flex items-center">
+                Generated Structure
+                <TooltipProvider className="flex items-center">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="sm" className="ml-2">
+                        <Info className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Click on folders to expand/collapse</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </h2>
+              <Card>
+                <ScrollArea className="h-[300px] w-full rounded-md border p-4">
+                  {renderStructure(structure)}
+                </ScrollArea>
+              </Card>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline" className="mt-4">
+            <Copy className="mr-2 h-4 w-4" />
             Copy Example
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Example</DialogTitle>
-              <DialogDescription>
-                <p className="mb-6">
-                  Copy the example below to your clipboard and paste it into the
-                  input field.
-                </p>
-                <div className="relative">
-                  <pre className="p-2 border border-zinc-700 rounded-lg">
-                    <code className="text-sm">
-                      src/ <br />
-                      {"  "}pages/ <br />
-                      {"    "}index <br />
-                      {"    "}about <br />
-                      {"  "}components/ <br />
-                      {"    "}Header <br />
-                      {"    "}Footer <br />
-                      {"  "}api/ <br />
-                      {"    "}users
-                    </code>
-                  </pre>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="absolute top-2 right-2"
-                    onClick={copyToClipboard}
-                  >
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                </div>
-              </DialogDescription>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
-      </div>
-      <DotPattern
-        width={20}
-        height={20}
-        cx={1}
-        cy={1}
-        cr={1}
-        className={cn(
-          "[mask-image:linear-gradient(to_bottom_right,white,transparent,transparent)] "
-        )}
-      />
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Example Structure</DialogTitle>
+            <DialogDescription>
+              <p className="mb-6">
+                Copy the example below to your clipboard and paste it into the
+                input field.
+              </p>
+              <div className="relative">
+                <pre className="p-4 bg-muted rounded-lg overflow-x-auto">
+                  <code className="text-sm font-mono">
+                    src/ <br />
+                    {"  "}pages/ <br />
+                    {"    "}index <br />
+                    {"    "}about <br />
+                    {"  "}components/ <br />
+                    {"    "}Header <br />
+                    {"    "}Footer <br />
+                    {"  "}api/ <br />
+                    {"    "}users
+                  </code>
+                </pre>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="absolute top-2 right-2"
+                  onClick={copyToClipboard}
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </div>
   );
-};
-
-export default FileStructureGenerator;
+}

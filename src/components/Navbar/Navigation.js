@@ -74,7 +74,7 @@ const Navigation = () => {
             </Badge>
           </Link>
           <Badge variant="outline" className="text-sm text-muted-foreground">
-            v0.2.1
+            v0.2.2
           </Badge>
           <Link
             href="https://github.com/Ubaton"
