@@ -32,7 +32,7 @@ export default function RootLayout({ children }) {
           <Navigation />
           <main>{children}</main>
           <Footer />
-          <Toaster />
+          <Toaster position="top-center" />
         </ThemeProvider>
       </body>
     </html>

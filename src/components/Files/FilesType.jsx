@@ -1,13 +1,14 @@
 "use client";
 
-import React from "react";
-import { Button } from "../ui/button";
-import { Copy, Folder, FileCode } from "lucide-react";
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Check, Copy, Folder, FileCode, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const FilesType = () => {
-  const structures = {
-    ecommerce: `src/
+const structures = {
+  ecommerce: `src/
   app/
     page
     layout
@@ -45,7 +46,7 @@ const FilesType = () => {
     formatCurrency
     calculateDiscount
   styles/`,
-    blogPost: `src/
+  blogPost: `src/
   app/
     page
     layout
@@ -65,7 +66,7 @@ const FilesType = () => {
     formatDate
     markdownToHtml
   styles/`,
-    techWebsite: `src/
+  techWebsite: `src/
   app/
     page
     layout
@@ -86,7 +87,7 @@ const FilesType = () => {
   lib/
     api
   styles/`,
-    portfolio: `src/
+  portfolio: `src/
   app/
     page
     layout
@@ -107,17 +108,54 @@ const FilesType = () => {
   lib/
     projectData
   styles/`,
-  };
+};
 
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
+export default function Component() {
+  const [copyingStructure, setCopyingStructure] = useState(null);
+
+  const handleCopy = (key, structure) => {
+    setCopyingStructure(key);
+
+    setTimeout(() => {
+      navigator.clipboard
+        .writeText(structure)
+        .then(() => {
+          toast.custom(
+            (t) => (
+              <motion.div
+                initial={{ opacity: 0, y: 50, scale: 0.3 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
+                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                className="bg-zinc-100 border px-4 text-black py-2 rounded-md shadow-sm flex items-center space-x-2"
+              >
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", stiffness: 500, delay: 0.2 }}
+                >
+                  <Check className="w-5 h-5" />
+                </motion.div>
+                <span>Copied {key} structure!</span>
+              </motion.div>
+            ),
+            { duration: 2000, position: "top-center" } // Changed position to top-center
+          );
+        })
+        .catch((err) => {
+          console.error("Failed to copy: ", err);
+          toast.error(`Failed to copy ${key} structure`);
+        })
+        .finally(() => {
+          setCopyingStructure(null);
+        });
+    }, 1000); // 1 second delay
   };
 
   const renderStructure = (structure) => {
     return structure.split("\n").map((line, index) => {
       const indent = line.search(/\S/);
       const isFolder = line.trim().endsWith("/");
-      const isFile = !isFolder;
       const Icon = isFolder ? Folder : FileCode;
       return (
         <div
@@ -136,27 +174,37 @@ const FilesType = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 p-8">
-      {Object.entries(structures).map(([key, structure]) => (
-        <div key={key} className="border rounded-lg p-4">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold capitalize">{key} Structure</h2>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => copyToClipboard(structure)}
-            >
-              <Copy className="w-4 h-4 mr-2" />
-              Copy
-            </Button>
+    <div className="p-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        {Object.entries(structures).map(([key, structure]) => (
+          <div key={key} className="border rounded-lg p-4">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold capitalize">{key} Structure</h2>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleCopy(key, structure)}
+                disabled={copyingStructure !== null}
+                aria-label={
+                  copyingStructure === key
+                    ? `Copying ${key} structure`
+                    : `Copy ${key} structure`
+                }
+              >
+                {copyingStructure === key ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Copy className="w-4 h-4 mr-2" />
+                )}
+                {copyingStructure === key ? "Copying..." : "Copy"}
+              </Button>
+            </div>
+            <div className="bg-secondary p-4 rounded-lg overflow-auto">
+              {renderStructure(structure)}
+            </div>
           </div>
-          <div className="bg-secondary p-4 rounded-lg">
-            {renderStructure(structure)}
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
-};
-
-export default FilesType;
+}
