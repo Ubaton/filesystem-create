@@ -4,8 +4,6 @@ import { ThemeProvider } from "next-themes";
 import Navigation from "../components/Navbar/Navigation";
 import Footer from "../components/Footer/Footer";
 import { Toaster } from "sonner";
-import { analytics } from "../components/Firebase/FirebaseConfig";
-import Script from "next/script";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -30,10 +28,6 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Script
-          strategy="afterInteractive"
-          src={`https://www.googletagmanager.com/gtag/js?id=${firebaseConfig.measurementId}`}
-        />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Navigation />
           <main>{children}</main>
