@@ -21,11 +21,11 @@ const Hero = () => {
               <span>✨ Boiler Plate Code Included</span>
             </AnimatedShinyText>
           </Badge>
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none lg:max-w-2xl">
+          <div className="space-y-4">
+            <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl/none">
               Generate File Structures with
               <WordRotate
-                className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none lg:max-w-2xl text-black dark:text-white"
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter bg-gradient-to-r from-primary to-primary-foreground bg-clip-text text-transparent"
                 words={["Ease", "Speed", "Precision", "Flexibility"]}
               />
             </h1>
