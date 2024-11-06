@@ -4,6 +4,7 @@ import { ThemeProvider } from "next-themes";
 import Navigation from "../components/Navbar/Navigation";
 import Footer from "../components/Footer/Footer";
 import { Toaster } from "sonner";
+import ScrollToTop from "../components/ui/sroll-to-top";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -32,6 +33,7 @@ export default function RootLayout({ children }) {
           <Navigation />
           <main>{children}</main>
           <Footer />
+          <ScrollToTop />
           <Toaster position="top-center" />
         </ThemeProvider>
       </body>
