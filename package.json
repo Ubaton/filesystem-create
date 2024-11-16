@@ -1,6 +1,6 @@
 {
   "name": "filesystem-create",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "private": true,
   "bin": {
     "filegen": "./bin/filegen.js"

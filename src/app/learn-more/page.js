@@ -1,3 +1,5 @@
+"use cache";
+
 import LearnMore from "@/components/LearnMore/LearnMore";
 import React from "react";
 

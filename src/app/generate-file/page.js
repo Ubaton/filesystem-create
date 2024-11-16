@@ -1,3 +1,5 @@
+"use cache";
+
 import FileStructureGenerator from "@/components/FileStructureGenerator/Generator";
 import React from "react";
 

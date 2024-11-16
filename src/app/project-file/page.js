@@ -1,3 +1,5 @@
+"use cache";
+
 import FilesType from "@/components/Files/FilesType";
 import React from "react";
 
