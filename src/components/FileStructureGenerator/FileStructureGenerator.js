@@ -1,10 +1,18 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Download } from "lucide-react";
+import { Copy, Download } from "lucide-react";
 import JSZip from "jszip";
 import FileSaver from "file-saver";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import InputSection from "./InputSection";
@@ -58,6 +66,7 @@ export default function FileStructureGenerator() {
   const [defaultFileType, setDefaultFileType] = useState("JS");
   const [structure, setStructure] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
     const savedStructure = localStorage.getItem("fileStructure");
@@ -147,51 +156,116 @@ export default function FileStructureGenerator() {
     toast.success("ZIP file downloaded successfully!");
   };
 
+  const copyToClipboard = async () => {
+    const exampleText = `src/
+  pages/
+    index
+    about
+  components/
+    Header
+    Footer
+  api/
+    users`;
+
+    try {
+      await navigator.clipboard.writeText(exampleText);
+      toast.success("Example copied to clipboard");
+      setDialogOpen(false);
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+      toast.error("Failed to copy example to clipboard");
+    }
+  };
+
   return (
-    <div className=" mx-auto py-8 w-full min-h-screen bg-card relative overflow-hidden">
-      <Card className="container max-w-4xl mx-auto">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
-        <div
-          className="noise-texture absolute inset-0 opacity-50"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-            mixBlendMode: "overlay",
-          }}
-        />
-        <CardHeader className="relative">
-          <CardTitle className="text-3xl font-bold text-center">
-            File Structure Generator
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6 relative">
-          <InputSection
-            input={input}
-            setInput={setInput}
-            defaultFileType={defaultFileType}
-            setDefaultFileType={setDefaultFileType}
-            onGenerate={generateStructure}
-            isGenerating={isGenerating}
-          />
+    <div className=" mx-auto py-8 w-full min-h-screen">
+      <div className="mx-auto max-w-4xl">
+        <Card className=" max-w-4xl mx-auto">
+          <CardHeader className="relative">
+            <CardTitle className="text-3xl font-bold text-center">
+              File Structure Generator
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6 relative">
+            <InputSection
+              input={input}
+              setInput={setInput}
+              defaultFileType={defaultFileType}
+              setDefaultFileType={setDefaultFileType}
+              onGenerate={generateStructure}
+              isGenerating={isGenerating}
+            />
 
-          <div className="flex justify-center space-x-4">
-            <Button
-              id="generate-btn"
-              onClick={generateStructure}
-              disabled={isGenerating}
-            >
-              Generate Structure
-            </Button>
-            {structure && (
-              <Button id="download-btn" variant="outline" onClick={generateZip}>
-                <Download className="mr-2 h-4 w-4" />
-                Download ZIP
+            <div className="flex justify-center space-x-4">
+              <Button
+                id="generate-btn"
+                onClick={generateStructure}
+                disabled={isGenerating}
+              >
+                Generate Structure
               </Button>
-            )}
-          </div>
+              {structure && (
+                <Button
+                  id="download-btn"
+                  variant="outline"
+                  onClick={generateZip}
+                >
+                  <Download className="mr-2 h-4 w-4" />
+                  Download ZIP
+                </Button>
+              )}
+            </div>
 
-          {structure && <FileTreeViewer structure={structure} />}
-        </CardContent>
-      </Card>
+            {structure && <FileTreeViewer structure={structure} />}
+          </CardContent>
+        </Card>
+        <Dialog
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+          className="absolute z-50"
+        >
+          <DialogTrigger asChild>
+            <Button variant="outline" className="mt-4 cursor-pointer">
+              <Copy className="mr-2 h-4 w-4" />
+              Copy Example
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Example Structure</DialogTitle>
+              <DialogDescription>
+                <p className="mb-6">
+                  Copy the example below to your clipboard and paste it into the
+                  input field.
+                </p>
+                <div className="relative">
+                  <pre className="p-4 bg-muted rounded-lg overflow-x-auto">
+                    <code className="text-sm font-mono">
+                      src/ <br />
+                      {"  "}pages/ <br />
+                      {"    "}index <br />
+                      {"    "}about <br />
+                      {"  "}components/ <br />
+                      {"    "}Header <br />
+                      {"    "}Footer <br />
+                      {"  "}api/ <br />
+                      {"    "}users
+                    </code>
+                  </pre>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="absolute top-2 right-2"
+                    onClick={copyToClipboard}
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </div>
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 }
