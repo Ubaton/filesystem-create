@@ -20,8 +20,8 @@ export function Sidebar() {
             "Introduction",
             "Installation",
             "Usage",
-            "Templates",
             "Interactive Selection",
+            "Templates",
             "License",
           ].map((item) => (
             <Link

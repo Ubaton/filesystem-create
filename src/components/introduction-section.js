@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 export function IntroductionSection() {
   return (
@@ -29,13 +30,11 @@ export function IntroductionSection() {
         </div>
       </div>
       <div className="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
-        <Button size="lg">
-          Get Started
-          <ArrowRight className="ml-2 h-4 w-4" />
-        </Button>
-        <Button variant="outline" size="lg">
-          View on GitHub
-        </Button>
+        <Link href="https://github.com/Ubaton/filegen-package">
+          <Button variant="outline" size="lg">
+            View on GitHub
+          </Button>
+        </Link>
       </div>
     </section>
   );

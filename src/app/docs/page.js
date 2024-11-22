@@ -25,12 +25,12 @@ const page = () => {
           <UsageSection />
         </section>
 
-        <section id="templates">
-          <TemplatesSection />
-        </section>
-
         <section id="interactive-selection">
           <InteractiveSelectionSection />
+        </section>
+
+        <section id="templates">
+          <TemplatesSection />
         </section>
 
         <section id="license" className="pb-12">
