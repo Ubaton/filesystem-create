@@ -7,6 +7,7 @@ import Navigation from "../components/Navbar/Navigation";
 import Footer from "../components/Footer/Footer";
 import { Toaster } from "sonner";
 import ScrollToTop from "../components/ui/sroll-to-top";
+// import { Sidebar } from "@/components/ui/sidebar";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -33,6 +34,7 @@ export default function RootLayout({ children }) {
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Navigation />
+          {/* <Sidebar /> */}
           <main>{children}</main>
           <Footer />
           <ScrollToTop />
