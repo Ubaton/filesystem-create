@@ -8,7 +8,7 @@ import {
 
 export function InteractiveSelectionSection() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full">
       <h1 className="font-heading text-3xl md:text-4xl">
         Interactive Selection
       </h1>
