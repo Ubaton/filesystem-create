@@ -46,6 +46,7 @@ const structures = {
     formatCurrency
     calculateDiscount
   styles/`,
+
   blogPost: `src/
   app/
     page
@@ -66,6 +67,7 @@ const structures = {
     formatDate
     markdownToHtml
   styles/`,
+
   techWebsite: `src/
   app/
     page
@@ -87,6 +89,7 @@ const structures = {
   lib/
     api
   styles/`,
+
   portfolio: `src/
   app/
     page
@@ -107,6 +110,147 @@ const structures = {
     ContactForm
   lib/
     projectData
+  styles/`,
+
+  saasApplication: `src/
+  app/
+    page
+    layout
+    dashboard/
+      page
+      settings/
+        page
+      billing/
+        page
+    api/
+      auth/
+        route
+      subscriptions/
+        route
+      usage/
+        route
+  components/
+    Dashboard/
+      Sidebar
+      TopBar
+      Stats
+      Charts
+    Settings/
+      Profile
+      Preferences
+    Billing/
+      Plans
+      Invoice
+  lib/
+    analytics
+    subscription
+  styles/`,
+
+  communityPlatform: `src/
+  app/
+    page
+    layout
+    forums/
+      page
+      [category]/
+        page
+      [thread]/
+        page
+    members/
+      page
+      [id]/
+        page
+    events/
+      page
+    api/
+      posts/
+        route
+      members/
+        route
+  components/
+    Forums/
+      ThreadList
+      PostEditor
+      CategoryNav
+    Members/
+      Profile
+      ActivityFeed
+    Events/
+      Calendar
+      EventCard
+  lib/
+    formatTime
+    notifications
+  styles/`,
+
+  learningPlatform: `src/
+  app/
+    page
+    layout
+    courses/
+      page
+      [courseId]/
+        page
+        lessons/
+          [lessonId]/
+            page
+    progress/
+      page
+    certificates/
+      page
+    api/
+      courses/
+        route
+      progress/
+        route
+  components/
+    Course/
+      Curriculum
+      VideoPlayer
+      Quiz
+    Progress/
+      TrackingCard
+      Achievements
+    Certificate/
+      Template
+  lib/
+    courseProgress
+    certification
+  styles/`,
+
+  newsPortal: `src/
+  app/
+    page
+    layout
+    news/
+      page
+      [category]/
+        page
+      [article]/
+        page
+    topics/
+      page
+    archive/
+      page
+    api/
+      articles/
+        route
+      topics/
+        route
+  components/
+    Articles/
+      Featured
+      List
+      Related
+    Topics/
+      Navigation
+      Trending
+    Search/
+      Filter
+      Results
+  lib/
+    newsApi
+    categoryFilters
   styles/`,
 };
 
