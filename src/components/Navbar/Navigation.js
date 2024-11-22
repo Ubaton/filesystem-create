@@ -6,10 +6,11 @@ import {
   Moon,
   FileCode2,
   Github,
-  Twitter,
+  // Twitter,
   Laptop,
   FolderTree,
 } from "lucide-react";
+import { BrandX } from "@mynaui/icons-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import {
@@ -92,7 +93,7 @@ const Navigation = () => {
             rel="noopener noreferrer"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            <Twitter className="h-5 w-5" />
+            <BrandX className="h-5 w-5" />
             <span className="sr-only">Twitter profile</span>
           </Link>
 
