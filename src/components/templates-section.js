@@ -90,7 +90,7 @@ export function TemplatesSection() {
       </p>
       <div className="grid gap-6 md:grid-cols-2">
         {templates.map((template, index) => (
-          <Card key={index}>
+          <Card key={index} className="shadow-none">
             <CardHeader>
               <CardTitle>{template.name}</CardTitle>
             </CardHeader>

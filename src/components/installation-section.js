@@ -22,12 +22,12 @@ export function InstallationSection() {
   };
 
   return (
-    <div className="space-y-8 w-full">
+    <div className="space-y-8 w-full shadow-none">
       <h1 className="font-heading text-3xl md:text-4xl">Installation</h1>
       <p className="text-xl text-muted-foreground">
         Get started with FileGen by installing it globally on your system.
       </p>
-      <Card>
+      <Card className="shadow-none">
         <CardHeader>
           <CardTitle>Install FileGen globally</CardTitle>
           <CardDescription>
@@ -56,7 +56,7 @@ export function InstallationSection() {
       </Card>
 
       {/* Improved npm section */}
-      <Card className="w-full mx-auto">
+      <Card className="w-full mx-auto shadow-none">
         <div className="flex flex-col sm:flex-row items-start sm:items-center p-6 space-y-4 sm:space-y-0">
           <CardHeader className="flex-1 p-0 sm:pr-4">
             <div className="flex items-center space-x-2">
@@ -77,7 +77,7 @@ export function InstallationSection() {
                 className="flex items-center space-x-2 text-sm text-primary hover:underline border dark:border-zinc-700 rounded-md px-2"
               >
                 <NPM className="w-6 h-6 mt-1" />
-                <span>1.0.3</span>
+                <span>v1.0.3</span>
               </Link>
             </div>
           </div>

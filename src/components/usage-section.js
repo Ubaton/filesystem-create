@@ -34,7 +34,7 @@ export function UsageSection() {
         Learn how to use FileGen to generate file structures for your projects.
       </p>
       <div className="grid gap-6 md:grid-cols-2">
-        <Card>
+        <Card className="shadow-none">
           <CardHeader>
             <CardTitle>Run the interactive CLI</CardTitle>
             <CardDescription>
@@ -61,7 +61,7 @@ export function UsageSection() {
             </pre>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="shadow-none">
           <CardHeader>
             <CardTitle>Specify a template directly</CardTitle>
             <CardDescription>

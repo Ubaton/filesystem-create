@@ -1,6 +1,5 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 export function IntroductionSection() {
@@ -15,13 +14,13 @@ export function IntroductionSection() {
         boilerplate code, and custom templates with ease.
       </p>
       <div className="mb-8 grid gap-4 sm:grid-cols-2">
-        <div className="rounded-lg bg-zinc-900 p-4">
+        <div className="rounded-lg bg-muted dark:bg-zinc-900 p-4 border border-zinc-200 dark:border-zinc-800">
           <h3 className="mb-2 font-semibold">Quick Setup</h3>
           <p className="mb-2 text-sm text-zinc-400">
             Get started in minutes with our simple installation process.
           </p>
         </div>
-        <div className="rounded-lg bg-zinc-900 p-4">
+        <div className="rounded-lg bg-muted dark:bg-zinc-900 p-4 border border-zinc-200 dark:border-zinc-800">
           <h3 className="mb-2 font-semibold">Customizable Templates</h3>
           <p className="mb-2 text-sm text-zinc-400">
             Create and use your own templates or choose from our pre-defined

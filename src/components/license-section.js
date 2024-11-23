@@ -13,7 +13,7 @@ export function LicenseSection() {
       <p className="text-xl text-muted-foreground">
         Information about the license under which FileGen is distributed.
       </p>
-      <Card>
+      <Card className="shadow-none">
         <CardHeader>
           <CardTitle>MIT License</CardTitle>
           <CardDescription>A permissive open-source license</CardDescription>

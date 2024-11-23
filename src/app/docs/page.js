@@ -11,7 +11,6 @@ import React from "react";
 const page = () => {
   return (
     <div className="flex justify-center items-center min-h-screen w-full">
-      {/* Main content */}
       <main className="w-full mx-auto space-y-12 p-8">
         <section id="introduction">
           <IntroductionSection />
@@ -25,7 +24,7 @@ const page = () => {
           <UsageSection />
         </section>
 
-        <section id="interactive-selection">
+        <section id="interactive">
           <InteractiveSelectionSection />
         </section>
 

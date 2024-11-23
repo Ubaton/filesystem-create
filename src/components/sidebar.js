@@ -1,9 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Terminal, ChevronRight } from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
+import { Terminal } from "lucide-react";
 
 export function Sidebar() {
   return (
@@ -27,7 +25,7 @@ export function Sidebar() {
             <Link
               key={item}
               href={`#${item.toLowerCase()}`}
-              className="block rounded-lg px-3 py-2 text-sm text-gray-300 hover:bg-zinc-900 hover:text-white"
+              className="block rounded-lg px-3 py-2 text-sm text-black dark:text-white hover:bg-zinc-900 hover:text-white"
             >
               {item}
             </Link>
