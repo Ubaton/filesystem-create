@@ -27,7 +27,7 @@ export function Sidebar() {
             <Link
               key={item}
               href={`#${item.toLowerCase()}`}
-              className="block rounded-lg px-3 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-white"
+              className="block rounded-lg px-3 py-2 text-sm text-gray-300 hover:bg-zinc-900 hover:text-white"
             >
               {item}
             </Link>

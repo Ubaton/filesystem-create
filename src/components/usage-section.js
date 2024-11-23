@@ -10,19 +10,20 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 
 export function UsageSection() {
-  const [copied, setCopied] = useState(false);
+  const [copiedCLI, setCopiedCLI] = useState(false);
+  const [copiedTemplate, setCopiedTemplate] = useState(false);
 
   const handleCopyCLI = () => {
     navigator.clipboard.writeText("filegen").then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setCopiedCLI(true);
+      setTimeout(() => setCopiedCLI(false), 2000);
     });
   };
 
   const handleCopyTemplate = () => {
     navigator.clipboard.writeText("filegen --template e-commerce").then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setCopiedTemplate(true);
+      setTimeout(() => setCopiedTemplate(false), 2000);
     });
   };
 
@@ -41,17 +42,17 @@ export function UsageSection() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <pre className="flex items-center justify-between bg-muted p-4 rounded-md overflow-x-auto">
+            <pre className="flex items-center justify-between bg-muted p-2 px-4 rounded-md overflow-x-auto">
               <code>filegen</code>
               <button onClick={handleCopyCLI} aria-label="Copy command">
-                {copied ? (
+                {copiedCLI ? (
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     exit={{ scale: 0 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <CheckCircleOne />
+                    <CheckCircleOne color="#10b981" />
                   </motion.div>
                 ) : (
                   <Copy />
@@ -68,17 +69,17 @@ export function UsageSection() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <pre className="flex items-center justify-between bg-muted p-4 rounded-md overflow-x-auto">
+            <pre className="flex items-center justify-between bg-muted p-2 px-4 rounded-md overflow-x-auto">
               <code>filegen --template e-commerce</code>
               <button onClick={handleCopyTemplate} aria-label="Copy command">
-                {copied ? (
+                {copiedTemplate ? (
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     exit={{ scale: 0 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <CheckCircleOne />
+                    <CheckCircleOne color="#10b981" />
                   </motion.div>
                 ) : (
                   <Copy />
