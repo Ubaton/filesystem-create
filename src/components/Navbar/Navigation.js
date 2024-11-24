@@ -25,6 +25,7 @@ import Link from "next/link";
 import Image from "next/image";
 import FileGen from "../../public/assets/GrayFIleGen.png";
 import { FaWandMagicSparkles } from "react-icons/fa6";
+import { FileText } from "@mynaui/icons-react";
 
 const imageAsset = {
   name: "File Structure Generator",
@@ -56,6 +57,15 @@ const Navigation = () => {
           </div>
         </Link>
         <nav className="flex items-center space-x-4">
+          <Link href="/docs">
+            <Badge
+              variant="ghost"
+              className="flex space-x-2 rounded-md py-0.5 cursor-pointer"
+            >
+              <FileText size={20} />
+              <span className="text-sm hidden md:block">Docs</span>
+            </Badge>
+          </Link>
           <Link href="/generate-file">
             <Badge
               variant="ghost"
