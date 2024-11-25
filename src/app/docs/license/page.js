@@ -2,7 +2,7 @@ import React from "react";
 
 const MITLicense = () => {
   return (
-    <div className="p-6 rounded-lg shadow-md">
+    <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">MIT License</h1>
       <p className="text-sm text-gray-600 mb-2">Copyright (c) 2024 Filegen</p>
       <p className="mb-4">
