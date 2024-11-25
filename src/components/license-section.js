@@ -5,6 +5,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { LinkOne } from "@mynaui/icons-react";
+import Link from "next/link";
 
 export function LicenseSection() {
   return (
@@ -15,7 +17,11 @@ export function LicenseSection() {
       </p>
       <Card className="shadow-none">
         <CardHeader>
-          <CardTitle>MIT License</CardTitle>
+          <Link href="/docs/license">
+            <CardTitle className="flex space-x-2">
+              <LinkOne size={20} /> <span>License</span>
+            </CardTitle>
+          </Link>
           <CardDescription>A permissive open-source license</CardDescription>
         </CardHeader>
         <CardContent>
