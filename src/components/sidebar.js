@@ -5,7 +5,7 @@ import { Terminal } from "lucide-react";
 
 export function Sidebar() {
   return (
-    <aside className="fixed top-14 z-30 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 md:sticky md:block border-r dark:border-zinc-900 border-zinc-100">
+    <aside className="fixed top-14 z-30 -ml-2 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 md:sticky md:block border-r dark:border-zinc-900 border-zinc-100">
       <div className="h-full py-6 pl-8 pr-6 lg:py-8">
         <div className="px-4 py-2">
           <Link href="#" className="flex items-center space-x-2">

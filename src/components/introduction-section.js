@@ -1,34 +1,70 @@
 import React from "react";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Callout } from "./ui/callout";
+
+const features = [
+  {
+    title: "Quick Setup",
+    description: "Get started in minutes with our simple installation process.",
+  },
+  {
+    title: "Customizable Templates",
+    description:
+      "Create and use your own templates or choose from our pre-defined options.",
+  },
+];
 
 export function IntroductionSection() {
   return (
-    <section id="introduction" className="py-12">
-      <h1 className="mb-6 text-4xl font-extrabold tracking-tight lg:text-5xl">
-        Welcome to FileGen
-      </h1>
-      <p className="mb-6 text-xl text-zinc-400">
-        FileGen is a powerful and flexible file generation tool designed to
-        streamline your development workflow. Create project structures,
-        boilerplate code, and custom templates with ease.
-      </p>
-      <div className="mb-8 grid gap-4 sm:grid-cols-2">
-        <div className="rounded-lg bg-muted dark:bg-zinc-900 p-4 border border-zinc-200 dark:border-zinc-800">
-          <h3 className="mb-2 font-semibold">Quick Setup</h3>
-          <p className="mb-2 text-sm text-zinc-400">
-            Get started in minutes with our simple installation process.
-          </p>
-        </div>
-        <div className="rounded-lg bg-muted dark:bg-zinc-900 p-4 border border-zinc-200 dark:border-zinc-800">
-          <h3 className="mb-2 font-semibold">Customizable Templates</h3>
-          <p className="mb-2 text-sm text-zinc-400">
-            Create and use your own templates or choose from our pre-defined
-            options.
-          </p>
-        </div>
+    <section id="introduction" className="py-12 space-y-8">
+      <div className="space-y-4">
+        <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">
+          Welcome to FileGen
+        </h1>
+        <p className="text-xl text-muted-foreground">
+          FileGen is a powerful and flexible file generation tool designed to
+          streamline your development workflow. Create project structures,
+          boilerplate code, and custom templates with ease.
+        </p>
       </div>
-      <div className="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
+
+      <Tabs defaultValue="installation" className="w-full">
+        <TabsList>
+          <TabsTrigger value="requirements">Requirements</TabsTrigger>
+          <TabsTrigger value="installation">Installation</TabsTrigger>
+        </TabsList>
+        <TabsContent value="requirements" className="py-3 mt-2">
+          <Callout>
+            {" "}
+            FileGen requires Node.js 18+ and{" "}
+            <span className="font-semibold">npm</span> for installation.{" "}
+          </Callout>
+        </TabsContent>
+        <TabsContent
+          value="installation"
+          className="p-4 border rounded-md mt-2"
+        >
+          <p>To install FileGen, run the following command:</p>
+          <pre className="bg-muted p-2 rounded mt-2">
+            <code>npm install -g filegen</code>
+          </pre>
+        </TabsContent>
+      </Tabs>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        {features.map((feature, index) => (
+          <div key={index} className="rounded-lg bg-muted p-4 border">
+            <h3 className="mb-2 font-semibold">{feature.title}</h3>
+            <p className="text-sm text-muted-foreground">
+              {feature.description}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      <div>
         <Link href="https://github.com/Ubaton/filegen-package">
           <Button variant="outline" size="lg">
             View on GitHub

@@ -7,34 +7,67 @@ import { LicenseSection } from "@/components/license-section";
 import { TemplatesSection } from "@/components/templates-section";
 import { UsageSection } from "@/components/usage-section";
 import React from "react";
+import { motion } from "framer-motion";
+
 
 const page = () => {
   return (
     <div className="flex justify-center items-center min-h-screen w-full">
       <main className="w-full mx-auto space-y-6 md:space-y-12 p-4 md:p-8">
-        <section id="introduction">
+        <motion.section
+          id="introduction"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
           <IntroductionSection />
-        </section>
+        </motion.section>
 
-        <section id="installation">
+        <motion.section
+          id="installation"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
           <InstallationSection />
-        </section>
+        </motion.section>
 
-        <section id="usage">
+        <motion.section
+          id="usage"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
           <UsageSection />
-        </section>
+        </motion.section>
 
-        <section id="interactive">
+        <motion.section
+          id="interactive"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
           <InteractiveSelectionSection />
-        </section>
+        </motion.section>
 
-        <section id="templates">
+        <motion.section
+          id="templates"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+        >
           <TemplatesSection />
-        </section>
+        </motion.section>
 
-        <section id="license" className="pb-12">
+        <motion.section
+          id="license"
+          className="pb-12"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+        >
           <LicenseSection />
-        </section>
+        </motion.section>
       </main>
     </div>
   );
