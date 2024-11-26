@@ -318,7 +318,7 @@ export default function Component() {
   };
 
   return (
-    <div className="p-8">
+    <div className="p-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {Object.entries(structures).map(([key, structure]) => (
           <div key={key} className="border rounded-lg p-4">
