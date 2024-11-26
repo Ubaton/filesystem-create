@@ -1,11 +1,14 @@
 "use client";
 
+"use client";
+
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Check, Copy, Folder, FileCode, Loader2 } from "lucide-react";
+import { Check, Folder, FileCode, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Copy } from "@mynaui/icons-react";
 
 const structures = {
   ecommerce: `src/
@@ -318,7 +321,7 @@ export default function Component() {
   };
 
   return (
-    <div className="p-4">
+    <div className="p-8">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {Object.entries(structures).map(([key, structure]) => (
           <div key={key} className="border rounded-lg p-4">
@@ -336,11 +339,11 @@ export default function Component() {
                 }
               >
                 {copyingStructure === key ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="animate-spin" size={25} />
                 ) : (
-                  <Copy className="w-4 h-4 mr-2" />
+                  <Copy size={25} />
                 )}
-                {copyingStructure === key ? "Copying..." : "Copy"}
+                {copyingStructure === key ? "" : ""}
               </Button>
             </div>
             <div className="bg-secondary p-4 rounded-lg overflow-auto">
