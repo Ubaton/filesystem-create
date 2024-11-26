@@ -180,8 +180,8 @@ export default function FileStructureGenerator() {
   return (
     <div className=" mx-auto py-8 w-full min-h-screen">
       <div className="mx-auto max-w-4xl relative overflow-hidden">
-        <div class="absolute right-0 top-0 h-16 w-16">
-          <div class="absolute transform rotate-45 bg-gradient-to-bl from-pink-400 to-violet-500 text-center text-white font-semibold py-1 right-[-35px] top-[32px] w-[170px]">
+        <div className="absolute right-0 top-0 h-8 w-8  md:h-16 md:w-16">
+          <div className="absolute transform rotate-45 bg-gradient-to-bl from-pink-400 to-violet-500 text-center text-white font-semibold py-1 right-[-35px] top-[32px] w-[170px]">
             New CLI Tool
           </div>
         </div>
