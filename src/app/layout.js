@@ -7,6 +7,7 @@ import Navigation from "../components/Navbar/Navigation";
 import Footer from "../components/Footer/Footer";
 import { Toaster } from "sonner";
 import ScrollToTop from "../components/ui/sroll-to-top";
+import { Analytics } from "@vercel/analytics/react";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -27,18 +28,21 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <Navigation />
-          <main>{children}</main>
-          <Footer />
-          <ScrollToTop />
-          <Toaster position="top-center" />
-        </ThemeProvider>
-      </body>
-    </html>
+    <>
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <Navigation />
+            <main>{children}</main>
+            <Footer />
+            <ScrollToTop />
+            <Toaster position="top-center" />
+          </ThemeProvider>
+        </body>
+      </html>
+      <Analytics />
+    </>
   );
 }
