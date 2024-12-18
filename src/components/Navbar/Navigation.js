@@ -26,6 +26,8 @@ import Image from "next/image";
 import FileGen from "../../public/assets/GrayFIleGen.png";
 import { FaWandMagicSparkles } from "react-icons/fa6";
 import { FileText } from "@mynaui/icons-react";
+import NPMLogo from "../../public/assets/npm.svg";
+import { useRouter } from "next/navigation";
 
 const imageAsset = {
   name: "File Structure Generator",
@@ -34,6 +36,11 @@ const imageAsset = {
 
 const Navigation = () => {
   const { setTheme, theme } = useTheme();
+  const router = useRouter();
+
+  const handleLinkToNPM = () => {
+    router.push("https://www.npmjs.com/package/@ubaton/filegen");
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -84,8 +91,12 @@ const Navigation = () => {
               <span className="text-sm hidden md:block">Project File</span>
             </Badge>
           </Link>
-          <Badge variant="outline" className="text-sm text-muted-foreground">
-            v1.2.0
+          <Badge
+            onClick={handleLinkToNPM}
+            variant="outline"
+            className="flex iteam-center text-sm text-muted-foreground space-x-2 cursor-pointer"
+          >
+            <span className="hover:underline"> v1.2.0</span>
           </Badge>
           <Link
             href="https://github.com/Ubaton"
