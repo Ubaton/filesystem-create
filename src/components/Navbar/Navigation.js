@@ -11,7 +11,7 @@ import {
   FolderTree,
 } from "lucide-react";
 import { BrandX } from "@mynaui/icons-react";
-import { useTheme } from "next-themes";
+// import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -28,6 +28,7 @@ import { FaWandMagicSparkles } from "react-icons/fa6";
 import { FileText } from "@mynaui/icons-react";
 import NPMLogo from "../../public/assets/npm.svg";
 import { useRouter } from "next/navigation";
+import ThemeToggle from "../ui/theme-toggle";
 
 const imageAsset = {
   name: "File Structure Generator",
@@ -35,7 +36,7 @@ const imageAsset = {
 };
 
 const Navigation = () => {
-  const { setTheme, theme } = useTheme();
+  // const { setTheme, theme } = useTheme();
   const router = useRouter();
 
   const handleLinkToNPM = () => {
@@ -117,50 +118,7 @@ const Navigation = () => {
             <BrandX className="h-5 w-5" />
             <span className="sr-only">Twitter profile</span>
           </Link>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <motion.div
-                  initial={false}
-                  animate={{
-                    rotate: theme === "dark" ? -90 : 0,
-                    scale: theme === "dark" ? 0 : 1,
-                  }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Sun className="h-5 w-5" />
-                </motion.div>
-                <motion.div
-                  initial={false}
-                  animate={{
-                    rotate: theme === "dark" ? 0 : 90,
-                    scale: theme === "dark" ? 1 : 0,
-                  }}
-                  transition={{ duration: 0.3 }}
-                  className="absolute"
-                >
-                  <Moon className="h-5 w-5" />
-                </motion.div>
-                <span className="sr-only">Toggle theme</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {/* Dropdown Items for Theme Selection */}
-              <DropdownMenuItem onClick={() => setTheme("light")}>
-                <Sun className="mr-2 h-4 w-4" />
-                <span>Light</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("dark")}>
-                <Moon className="mr-2 h-4 w-4" />
-                <span>Dark</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("system")}>
-                <Laptop className="mr-2 h-4 w-4" />
-                <span>System</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <ThemeToggle />
         </nav>
       </div>
     </header>
