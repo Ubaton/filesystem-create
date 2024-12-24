@@ -97,7 +97,7 @@ const Navigation = () => {
             variant="outline"
             className="flex iteam-center text-sm text-muted-foreground space-x-2 cursor-pointer"
           >
-            <span className="hover:underline"> v2.0.1</span>
+            <span className="hover:underline"> v2.0.2</span>
           </Badge>
           <Link
             href="https://github.com/Ubaton"

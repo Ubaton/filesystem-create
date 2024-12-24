@@ -77,7 +77,7 @@ export function InstallationSection() {
                 className="flex items-center space-x-2 text-sm text-primary hover:underline border dark:border-zinc-700 rounded-md px-2"
               >
                 <NPM className="w-6 h-6 mt-1" />
-                <span>v2.0.1</span>
+                <span>v2.0.2</span>
               </Link>
             </div>
           </div>
