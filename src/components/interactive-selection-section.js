@@ -14,8 +14,8 @@ export function InteractiveSelectionSection() {
           🎯 Interactive Selection
         </h1>
         <p className="text-xl text-muted-foreground">
-          When you run <code>filegen</code> without any arguments, you'll be
-          presented with an interactive CLI interface:
+          When you run <code>filegen</code> without any arguments, you&apos;ll
+          be presented with an interactive CLI interface:
         </p>
         <Card className="shadow-none">
           <CardHeader>
