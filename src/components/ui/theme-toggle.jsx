@@ -9,6 +9,7 @@ const ThemeToggle = () => {
   const { setTheme, resolvedTheme } = useTheme();
 
   const handleToggle = () => {
+    "use cache"
     setTheme(resolvedTheme === "dark" ? "light" : "dark");
   };
 
