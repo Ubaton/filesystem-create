@@ -1,265 +1,29 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Check, Folder, FileCode, Loader2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Check, Folder, FileCode, Loader2, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Copy } from "@mynaui/icons-react";
+import { structures } from "@/templates/projectStructures";
+import StructureTree from "./StructureTree";
+// import { Separator } from "../ui/separator";
+// import ProFileType from "./ProFileType";
 
-const structures = {
-  ecommerce: `src/
-  app/
-    page
-    layout
-    products/
-      page
-      [category]/
-        page
-        [product]/
-          page
-    cart/
-      page
-    checkout/
-      page
-    api/
-      products/
-        route
-      cart/
-        route
-      orders/
-        route
-  components/
-    Header/
-      Header
-      Navigation
-      SearchBar
-      CartIcon
-    Footer/
-      Footer
-      Newsletter
-      PolicyLinks
-    ProductCard
-    ProductGallery
-    AddToCartButton
-  lib/
-    formatCurrency
-    calculateDiscount
-  styles/`,
-
-  blogPost: `src/
-  app/
-    page
-    layout
-    blog/
-      page
-      [slug]/
-        page
-    api/
-      posts/
-        route
-  components/
-    Header
-    Footer
-    BlogPost
-    CommentSection
-  lib/
-    formatDate
-    markdownToHtml
-  styles/`,
-
-  techWebsite: `src/
-  app/
-    page
-    layout
-    products/
-      page
-    solutions/
-      page
-    about/
-      page
-    contact/
-      page
-  components/
-    Header
-    Footer
-    ProductShowcase
-    TechSpecs
-    ContactForm
-  lib/
-    api
-  styles/`,
-
-  portfolio: `src/
-  app/
-    page
-    layout
-    projects/
-      page
-      [project]/
-        page
-    about/
-      page
-    contact/
-      page
-  components/
-    Header
-    Footer
-    ProjectCard
-    SkillsSection
-    ContactForm
-  lib/
-    projectData
-  styles/`,
-
-  saasApplication: `src/
-  app/
-    page
-    layout
-    dashboard/
-      page
-      settings/
-        page
-      billing/
-        page
-    api/
-      auth/
-        route
-      subscriptions/
-        route
-      usage/
-        route
-  components/
-    Dashboard/
-      Sidebar
-      TopBar
-      Stats
-      Charts
-    Settings/
-      Profile
-      Preferences
-    Billing/
-      Plans
-      Invoice
-  lib/
-    analytics
-    subscription
-  styles/`,
-
-  communityPlatform: `src/
-  app/
-    page
-    layout
-    forums/
-      page
-      [category]/
-        page
-      [thread]/
-        page
-    members/
-      page
-      [id]/
-        page
-    events/
-      page
-    api/
-      posts/
-        route
-      members/
-        route
-  components/
-    Forums/
-      ThreadList
-      PostEditor
-      CategoryNav
-    Members/
-      Profile
-      ActivityFeed
-    Events/
-      Calendar
-      EventCard
-  lib/
-    formatTime
-    notifications
-  styles/`,
-
-  learningPlatform: `src/
-  app/
-    page
-    layout
-    courses/
-      page
-      [courseId]/
-        page
-        lessons/
-          [lessonId]/
-            page
-    progress/
-      page
-    certificates/
-      page
-    api/
-      courses/
-        route
-      progress/
-        route
-  components/
-    Course/
-      Curriculum
-      VideoPlayer
-      Quiz
-    Progress/
-      TrackingCard
-      Achievements
-    Certificate/
-      Template
-  lib/
-    courseProgress
-    certification
-  styles/`,
-
-  newsPortal: `src/
-  app/
-    page
-    layout
-    news/
-      page
-      [category]/
-        page
-      [article]/
-        page
-    topics/
-      page
-    archive/
-      page
-    api/
-      articles/
-        route
-      topics/
-        route
-  components/
-    Articles/
-      Featured
-      List
-      Related
-    Topics/
-      Navigation
-      Trending
-    Search/
-      Filter
-      Results
-  lib/
-    newsApi
-    categoryFilters
-  styles/`,
-};
-
-export default function Component() {
+export default function FileType() {
   const [copyingStructure, setCopyingStructure] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredStructures = useMemo(() => {
+    return Object.entries(structures).filter(([key]) =>
+      key.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [searchTerm]);
 
   const handleCopy = (key, structure) => {
-    "use cache";
     setCopyingStructure(key);
 
     setTimeout(() => {
@@ -285,7 +49,7 @@ export default function Component() {
                 <span>Copied {key} structure!</span>
               </motion.div>
             ),
-            { duration: 2000, position: "top-center" } // Changed position to top-center
+            { duration: 2000, position: "top-center" }
           );
         })
         .catch((err) => {
@@ -295,62 +59,84 @@ export default function Component() {
         .finally(() => {
           setCopyingStructure(null);
         });
-    }, 1000); // 1 second delay
-  };
-
-  const renderStructure = (structure) => {
-    return structure.split("\n").map((line, index) => {
-      const indent = line.search(/\S/);
-      const isFolder = line.trim().endsWith("/");
-      const Icon = isFolder ? Folder : FileCode;
-      return (
-        <div
-          key={index}
-          className={cn("flex items-center", indent > 0 && `ml-${indent * 4}`)}
-        >
-          <Icon
-            className={`w-4 h-4 mr-2 ${
-              isFolder ? "text-yellow-500" : "text-blue-500"
-            }`}
-          />
-          <span>{line.trim()}</span>
-        </div>
-      );
-    });
+    }, 1000);
   };
 
   return (
-    <div className="p-8 min-h-screen">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        {Object.entries(structures).map(([key, structure]) => (
-          <div key={key} className="border rounded-lg p-4">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold capitalize">{key} Structure</h2>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleCopy(key, structure)}
-                disabled={copyingStructure !== null}
-                aria-label={
-                  copyingStructure === key
-                    ? `Copying ${key} structure`
-                    : `Copy ${key} structure`
-                }
-              >
-                {copyingStructure === key ? (
-                  <Loader2 className="animate-spin" size={25} />
-                ) : (
-                  <Copy size={25} />
-                )}
-                {copyingStructure === key ? "" : ""}
-              </Button>
-            </div>
-            <div className="bg-secondary p-4 rounded-lg overflow-auto">
-              {renderStructure(structure)}
-            </div>
-          </div>
-        ))}
+    <div className="p-4 md:p-8 min-h-screen bg-background">
+      <h1 className="text-3xl font-bold mb-6 text-center">
+        Project Structures
+      </h1>
+      <div className="mb-6 max-w-md mx-auto">
+        <div className="relative">
+          <Input
+            type="text"
+            placeholder="Search structures..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
+          <Search
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
+            size={20}
+          />
+        </div>
       </div>
+      <AnimatePresence>
+        <motion.div
+          layout
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-6"
+        >
+          {filteredStructures.map(([key, structure]) => (
+            <motion.div
+              key={key}
+              layout
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+              className="border rounded-lg p-4 bg-card shadow-sm"
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold capitalize">
+                  {key} Structure
+                </h2>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleCopy(key, structure)}
+                  disabled={copyingStructure !== null}
+                  aria-label={
+                    copyingStructure === key
+                      ? `Copying ${key} structure`
+                      : `Copy ${key} structure`
+                  }
+                >
+                  {copyingStructure === key ? (
+                    <Loader2 className="animate-spin" size={20} />
+                  ) : (
+                    <Copy size={20} />
+                  )}
+                  <span className="sr-only">
+                    {copyingStructure === key ? "Copying" : "Copy"}
+                  </span>
+                </Button>
+              </div>
+              <div className="bg-secondary p-4 rounded-lg overflow-auto max-h-80">
+                <StructureTree structure={structure} />
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+        {/* <Separator /> */}
+        {/* <div className="flex flex-col justify-center items-center my-6">
+          <h2 className="text-2xl font-bold mb-4">Pro Structures</h2>
+          <p className="text-muted-foreground">
+            These structures are only available for paid plans.
+          </p>
+        </div> */}
+        {/* <ProFileType /> */}
+      </AnimatePresence>
     </div>
   );
 }
