@@ -18,7 +18,7 @@ export function LicenseSection() {
       <Card className="shadow-none">
         <CardHeader>
           <Link href="/docs/license">
-            <CardTitle className="flex space-x-2">
+            <CardTitle className="flex space-x-2 hover:underline">
               <LinkOne size={20} /> <span>License</span>
             </CardTitle>
           </Link>

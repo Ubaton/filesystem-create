@@ -9,7 +9,6 @@ import { UsageSection } from "@/components/usage-section";
 import React from "react";
 import { motion } from "framer-motion";
 
-
 const page = () => {
   return (
     <div className="flex justify-center items-center min-h-screen w-full">

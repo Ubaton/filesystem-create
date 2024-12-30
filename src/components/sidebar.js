@@ -18,7 +18,7 @@ export function Sidebar() {
             "Introduction",
             "Installation",
             "Usage",
-            "Interactive Selection",
+            "Interactive",
             "Templates",
             "License",
           ].map((item) => (
