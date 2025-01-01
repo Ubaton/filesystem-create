@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import FileGen from "../../public/assets/GrayFIleGen.png";
@@ -9,14 +11,18 @@ const imageAsset = {
 };
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+
+  useEffect(() => {
+    setCurrentYear(new Date().getFullYear());
+  }, []);
 
   return (
     <footer className="border-t">
       <div className="container mx-auto px-4 py-6">
         <div className="flex items-center justify-between">
           <p className="text-xs text-muted-foreground">
-            &copy; {currentYear} Raymond Ngobeni. All rights reserved.
+            &copy; 2024 - {currentYear} Raymond Ngobeni. All rights reserved.
           </p>
 
           <Link href={"/"}>
