@@ -21,7 +21,7 @@ export default function Footer() {
     <footer className="border-t">
       <div className="container mx-auto px-4 py-6">
         <div className="flex items-center justify-between">
-          <p className="text-xs text-muted-foreground">
+          <p className="md:text-xs text-[9px] text-muted-foreground">
             &copy; 2024 - {currentYear} Raymond Ngobeni. All rights reserved.
           </p>
 
