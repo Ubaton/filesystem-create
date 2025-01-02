@@ -10,8 +10,8 @@ import { cn } from "@/lib/utils";
 import { Copy } from "@mynaui/icons-react";
 import { structures } from "@/templates/projectStructures";
 import StructureTree from "./StructureTree";
-// import { Separator } from "../ui/separator";
-// import ProFileType from "./ProFileType";
+import { Separator } from "../ui/separator";
+import ProFileType from "./ProFileType";
 
 export default function FileType() {
   const [copyingStructure, setCopyingStructure] = useState(null);
@@ -128,14 +128,14 @@ export default function FileType() {
             </motion.div>
           ))}
         </motion.div>
-        {/* <Separator /> */}
-        {/* <div className="flex flex-col justify-center items-center my-6">
+        <Separator />
+        <div className="flex flex-col justify-center items-center my-6">
           <h2 className="text-2xl font-bold mb-4">Pro Structures</h2>
           <p className="text-muted-foreground">
             These structures are only available for paid plans.
           </p>
-        </div> */}
-        {/* <ProFileType /> */}
+        </div>
+        <ProFileType />
       </AnimatePresence>
     </div>
   );

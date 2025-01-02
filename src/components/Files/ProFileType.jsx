@@ -1,16 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Check, Loader2 } from "lucide-react";
+import { Check } from "lucide-react";
 import { Copy } from "@mynaui/icons-react";
 import { proStructure } from "@/templates/proProjectStuctres";
 import StructureTree from "./StructureTree";
 
-const ProFileType = () => {
+const ProFileType = ({ searchTerm }) => {
   const [copyingStructure, setCopyingStructure] = useState(null);
+
+  const filteredProStructures = useMemo(() => {
+    if (!searchTerm) return Object.entries(proStructure); // Return all if searchTerm is empty
+    return Object.entries(proStructure).filter(
+      ([key]) => key && key.toLowerCase().includes(searchTerm.toLowerCase()) // Ensure key is defined
+    );
+  }, [searchTerm]);
 
   const handleCopy = (key, structure) => {
     setCopyingStructure(key);
@@ -57,7 +64,7 @@ const ProFileType = () => {
         layout
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
       >
-        {Object.entries(proStructure).map(([key, structure]) => (
+        {filteredProStructures.map(([key, structure]) => (
           <motion.div
             key={key}
             layout
@@ -68,33 +75,20 @@ const ProFileType = () => {
             className="border rounded-lg p-4 bg-card shadow-sm"
           >
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold capitalize">
-                {key} Pro Structure
-              </h2>
+              <h2 className="text-xl font-bold capitalize">{key}</h2>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => handleCopy(key, structure)}
-                disabled={copyingStructure !== null}
-                aria-label={
-                  copyingStructure === key
-                    ? `Copying ${key} pro structure`
-                    : `Copy ${key} pro structure`
-                }
+                disabled={copyingStructure === key} // Enable the button when not copying
+                aria-label={`Copy ${key} pro structure`}
               >
-                {copyingStructure === key ? (
-                  <Loader2 className="animate-spin" size={20} />
-                ) : (
-                  <Copy size={20} />
-                )}
-                <span className="sr-only">
-                  {copyingStructure === key ? "Copying" : "Copy"}
-                </span>
+                <Copy size={20} />
+                <span className="sr-only">Copy</span>
               </Button>
             </div>
-            <div className="bg-secondary p-4 rounded-lg overflow-hidden max-h-40 relative">
-              <div className="absolute inset-0 bg-black opacity-50" />
-              <div className="overflow-hidden max-h-40">
+            <div className="bg-secondary p-4 rounded-lg relative">
+              <div className="overflow-auto max-h-80">
                 <StructureTree structure={structure} />
               </div>
             </div>
