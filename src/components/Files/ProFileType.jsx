@@ -14,8 +14,9 @@ const ProFileType = ({ searchTerm }) => {
 
   const filteredProStructures = useMemo(() => {
     if (!searchTerm) return Object.entries(proStructure); // Return all if searchTerm is empty
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
     return Object.entries(proStructure).filter(
-      ([key]) => key && key.toLowerCase().includes(searchTerm.toLowerCase()) // Ensure key is defined
+      ([key]) => key && key.toLowerCase().includes(lowerCaseSearchTerm) // Ensure key is defined
     );
   }, [searchTerm]);
 
@@ -64,36 +65,42 @@ const ProFileType = ({ searchTerm }) => {
         layout
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
       >
-        {filteredProStructures.map(([key, structure]) => (
-          <motion.div
-            key={key}
-            layout
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.2 }}
-            className="border rounded-lg p-4 bg-card shadow-sm"
-          >
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold capitalize">{key}</h2>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleCopy(key, structure)}
-                disabled={copyingStructure === key} // Enable the button when not copying
-                aria-label={`Copy ${key} pro structure`}
-              >
-                <Copy size={20} />
-                <span className="sr-only">Copy</span>
-              </Button>
-            </div>
-            <div className="bg-secondary p-4 rounded-lg relative">
-              <div className="overflow-auto max-h-80">
-                <StructureTree structure={structure} />
+        {filteredProStructures.length > 0 ? (
+          filteredProStructures.map(([key, structure]) => (
+            <motion.div
+              key={key}
+              layout
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+              className="border rounded-lg p-4 bg-card shadow-sm"
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold capitalize">{key}</h2>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleCopy(key, structure)}
+                  disabled={copyingStructure === key} // Enable the button when not copying
+                  aria-label={`Copy ${key} pro structure`}
+                >
+                  <Copy size={20} />
+                  <span className="sr-only">Copy</span>
+                </Button>
               </div>
-            </div>
-          </motion.div>
-        ))}
+              <div className="bg-secondary p-4 rounded-lg relative">
+                <div className="overflow-auto max-h-80">
+                  <StructureTree structure={structure} />
+                </div>
+              </div>
+            </motion.div>
+          ))
+        ) : (
+          <div className="col-span-full text-center text-gray-500">
+            No results found for "{searchTerm}"
+          </div>
+        )}
       </motion.div>
     </AnimatePresence>
   );
