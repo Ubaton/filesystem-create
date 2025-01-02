@@ -132,7 +132,8 @@ export default function FileType() {
         <div className="flex flex-col justify-center items-center my-6">
           <h2 className="text-2xl font-bold mb-4">Pro Structures</h2>
           <p className="text-muted-foreground">
-            These structures are only available for paid plans.
+            These structures are meticulously crafted and tailored for optimal
+            real-world application.
           </p>
         </div>
         <ProFileType />
