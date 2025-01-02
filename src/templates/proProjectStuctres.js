@@ -1,5 +1,5 @@
 export const proStructure = {
-  computer: `src/
+  computer_store: `src/
   app/
     layout
     page
