@@ -13,12 +13,33 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import NPM from "./ui/npm";
+import Yarn from "../public/assets/yarn.svg";
+import Pnpm from "../public/assets/pnpm.svg";
+import Bun from "../public/assets/bun.svg";
+import Npm from "../public/assets/npm.svg";
 
+import Image from "next/image";
 const packageManagers = [
-  { name: "npm", command: "npm install -g filegen" },
-  { name: "yarn", command: "yarn global add filegen" },
-  { name: "pnpm", command: "pnpm add -g filegen" },
-  { name: "bun", command: "bun add -g filegen" },
+  {
+    icon: Npm,
+    name: "npm",
+    command: "npm install -g filegen",
+  },
+  {
+    icon: Yarn,
+    name: "yarn",
+    command: "yarn global add filegen",
+  },
+  {
+    icon: Pnpm,
+    name: "pnpm",
+    command: "pnpm add -g filegen",
+  },
+  {
+    icon: Bun,
+    name: "bun",
+    command: "bun add -g filegen",
+  },
 ];
 
 export function InstallationSection() {
@@ -51,6 +72,13 @@ export function InstallationSection() {
             <TabsList className="grid w-full grid-cols-4 max-w-md">
               {packageManagers.map((pm) => (
                 <TabsTrigger key={pm.name} value={pm.name}>
+                  <Image
+                    src={pm.icon}
+                    alt={`${pm.name} logo`}
+                    width={20}
+                    height={20}
+                    className="mr-2"
+                  />
                   {pm.name}
                 </TabsTrigger>
               ))}
