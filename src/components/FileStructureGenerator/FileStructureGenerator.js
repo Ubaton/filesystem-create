@@ -25,8 +25,70 @@ const FileTypes = {
   TSX: ".tsx",
 };
 
+const baseTemplates = {
+  layout: `"use client";
+
+import localFont from "next/font/local";
+import "./globals.css";
+// make sure to install next-theme if will to use dark mode and light mode "npm i next-themes@0.2.0"
+import { ThemeProvider } from "next-themes";
+
+const geistSans = localFont({
+  src: "./fonts/GeistVF.woff",
+  variable: "--font-geist-sans",
+  weight: "100 900",
+});
+
+const geistMono = localFont({
+  src: "./fonts/GeistMonoVF.woff",
+  variable: "--font-geist-mono",
+  weight: "100 900",
+});
+
+export const metadata = {
+  title: "File Structure Generator",
+  description: "File Structure Generator built with Next.js and React. It allows users to create and visualize file structures, and generate downloadable ZIP files based on the input",
+};
+
+export default function RootLayout({ children }) {
+  return (
+    <>
+      <html lang="en">
+        <body className={\`\${geistSans.variable} \${geistMono.variable} antialiased\`}>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <main>{children}</main>
+          </ThemeProvider>
+        </body>
+      </html>
+    </>
+  );
+}`,
+  page: `"use client";
+
+import React from "react";
+
+
+export default function Home() {
+  return (
+    <div>
+      <h1>Home Page</h1>
+    </div>
+  );
+}`,
+};
+
 const generateBoilerplate = (name, fileType) => {
   const componentName = name.split(".")[0];
+
+  // Check for base templates first
+  if (name === "layout.js" || name === "layout.tsx") {
+    return baseTemplates.layout;
+  }
+  if (name === "page.js" || name === "page.tsx") {
+    return baseTemplates.page;
+  }
+
+  // Default component templates
   switch (fileType) {
     case "JS":
     case "JSX":
@@ -76,13 +138,22 @@ export default function FileStructureGenerator() {
   }, []);
 
   const generateStructure = () => {
-    "use cache";
     setIsGenerating(true);
     const lines = input.split("\n").filter((line) => line.trim() !== "");
     const root = { name: "root", children: [], type: "folder" };
     const stack = [root];
 
+    // Add app folder with layout and page by default if not present
+    let hasAppFolder = false;
     lines.forEach((line) => {
+      if (line.trim() === "app/") hasAppFolder = true;
+    });
+
+    const processedLines = hasAppFolder
+      ? lines
+      : ["app/", "  layout", "  page", ...lines];
+
+    processedLines.forEach((line) => {
       const level = line.search(/\S/);
       let name = line.trim();
       let type = "folder";
@@ -128,6 +199,7 @@ export default function FileStructureGenerator() {
 
     setStructure(root);
     setIsGenerating(false);
+    localStorage.setItem("fileStructure", input);
     toast.success("File structure generated successfully!");
   };
 
@@ -178,15 +250,15 @@ export default function FileStructureGenerator() {
   };
 
   return (
-    <div className=" mx-auto py-8 w-full min-h-screen">
+    <div className="mx-auto py-8 w-full min-h-screen">
       <div className="mx-auto max-w-4xl relative overflow-hidden">
-        <div className="absolute right-0 top-0 h-8 w-8  md:h-16 md:w-16">
+        <div className="absolute right-0 top-0 h-8 w-8 md:h-16 md:w-16">
           <div className="absolute transform rotate-45 bg-gradient-to-bl from-pink-400 to-violet-500 text-center text-white font-semibold py-1 right-[-35px] top-[32px] w-[170px]">
             New CLI Tool
           </div>
         </div>
 
-        <Card className=" max-w-4xl mx-auto">
+        <Card className="max-w-4xl mx-auto">
           <CardHeader className="relative">
             <CardTitle className="text-3xl font-bold text-center">
               File Structure Generator
