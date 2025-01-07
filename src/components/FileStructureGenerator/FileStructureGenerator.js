@@ -17,6 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import InputSection from "./InputSection";
 import FileTreeViewer from "./FileTreeViewer";
+import Noise from "../ui/noise";
 
 const FileTypes = {
   JS: ".js",
@@ -250,100 +251,112 @@ export default function FileStructureGenerator() {
   };
 
   return (
-    <div className="mx-auto py-8 w-full min-h-screen">
-      <div className="mx-auto max-w-4xl relative overflow-hidden">
-        <div className="absolute right-0 top-0 h-8 w-8 md:h-16 md:w-16">
-          <div className="absolute transform rotate-45 bg-gradient-to-bl from-pink-400 to-violet-500 text-center text-white font-semibold py-1 right-[-35px] top-[32px] w-[170px]">
-            New CLI Tool
-          </div>
-        </div>
-
-        <Card className="max-w-4xl mx-auto">
-          <CardHeader className="relative">
-            <CardTitle className="text-3xl font-bold text-center">
-              File Structure Generator
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6 relative">
-            <InputSection
-              input={input}
-              setInput={setInput}
-              defaultFileType={defaultFileType}
-              setDefaultFileType={setDefaultFileType}
-              onGenerate={generateStructure}
-              isGenerating={isGenerating}
-            />
-
-            <div className="flex justify-center space-x-4">
-              <Button
-                id="generate-btn"
-                onClick={generateStructure}
-                disabled={isGenerating}
-              >
-                Generate Structure
-              </Button>
-              {structure && (
-                <Button
-                  id="download-btn"
-                  variant="outline"
-                  onClick={generateZip}
-                >
-                  <Download className="mr-2 h-4 w-4" />
-                  Download ZIP
-                </Button>
-              )}
-            </div>
-
-            {structure && <FileTreeViewer structure={structure} />}
-          </CardContent>
-        </Card>
-        <Dialog
-          open={dialogOpen}
-          onOpenChange={setDialogOpen}
-          className="absolute z-50"
-        >
-          <DialogTrigger asChild>
-            <Button variant="outline" className="mt-4 cursor-pointer">
-              <Copy className="mr-2 h-4 w-4" />
-              Copy Example
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Example Structure</DialogTitle>
-              <DialogDescription>
-                <p className="mb-6">
-                  Copy the example below to your clipboard and paste it into the
-                  input field.
-                </p>
-                <div className="relative">
-                  <pre className="p-4 bg-muted rounded-lg overflow-x-auto">
-                    <code className="text-sm font-mono">
-                      src/ <br />
-                      {"  "}pages/ <br />
-                      {"    "}index <br />
-                      {"    "}about <br />
-                      {"  "}components/ <br />
-                      {"    "}Header <br />
-                      {"    "}Footer <br />
-                      {"  "}api/ <br />
-                      {"    "}users
-                    </code>
-                  </pre>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="absolute top-2 right-2"
-                    onClick={copyToClipboard}
-                  >
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                </div>
-              </DialogDescription>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
+    <>
+      {" "}
+      <div className="fixed top-0 left-0 right-0 bottom-0 z-0 h-full min-h-screen">
+        <Noise
+          patternSize={300}
+          patternScaleX={1}
+          patternScaleY={1}
+          patternRefreshInterval={2}
+          patternAlpha={20}
+        />
       </div>
-    </div>
+      <div className="mx-auto py-8 w-full min-h-screen">
+        <div className="mx-auto max-w-4xl relative overflow-hidden">
+          <div className="absolute right-0 top-0 h-8 w-8 md:h-16 md:w-16">
+            <div className="absolute transform rotate-45 bg-gradient-to-bl from-pink-400 to-violet-500 text-center text-white font-semibold py-1 right-[-35px] top-[32px] w-[170px]">
+              New CLI Tool
+            </div>
+          </div>
+
+          <Card className="max-w-4xl mx-auto">
+            <CardHeader className="relative">
+              <CardTitle className="text-3xl font-bold text-center">
+                File Structure Generator
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6 relative">
+              <InputSection
+                input={input}
+                setInput={setInput}
+                defaultFileType={defaultFileType}
+                setDefaultFileType={setDefaultFileType}
+                onGenerate={generateStructure}
+                isGenerating={isGenerating}
+              />
+
+              <div className="flex justify-center space-x-4">
+                <Button
+                  id="generate-btn"
+                  onClick={generateStructure}
+                  disabled={isGenerating}
+                >
+                  Generate Structure
+                </Button>
+                {structure && (
+                  <Button
+                    id="download-btn"
+                    variant="outline"
+                    onClick={generateZip}
+                  >
+                    <Download className="mr-2 h-4 w-4" />
+                    Download ZIP
+                  </Button>
+                )}
+              </div>
+
+              {structure && <FileTreeViewer structure={structure} />}
+            </CardContent>
+          </Card>
+          <Dialog
+            open={dialogOpen}
+            onOpenChange={setDialogOpen}
+            className="absolute z-50"
+          >
+            <DialogTrigger asChild>
+              <Button variant="outline" className="mt-4 cursor-pointer">
+                <Copy className="mr-2 h-4 w-4" />
+                Copy Example
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Example Structure</DialogTitle>
+                <DialogDescription>
+                  <p className="mb-6">
+                    Copy the example below to your clipboard and paste it into
+                    the input field.
+                  </p>
+                  <div className="relative">
+                    <pre className="p-4 bg-muted rounded-lg overflow-x-auto">
+                      <code className="text-sm font-mono">
+                        src/ <br />
+                        {"  "}pages/ <br />
+                        {"    "}index <br />
+                        {"    "}about <br />
+                        {"  "}components/ <br />
+                        {"    "}Header <br />
+                        {"    "}Footer <br />
+                        {"  "}api/ <br />
+                        {"    "}users
+                      </code>
+                    </pre>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="absolute top-2 right-2"
+                      onClick={copyToClipboard}
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
+        </div>
+      </div>
+    </>
   );
 }
