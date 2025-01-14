@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import InputSection from "./InputSection";
 import FileTreeViewer from "./FileTreeViewer";
 import Noise from "../ui/noise";
+import ChatAssistant from "../chat/chat-assistant";
 
 const FileTypes = {
   JS: ".js",
@@ -356,6 +357,9 @@ export default function FileStructureGenerator() {
             </DialogContent>
           </Dialog>
         </div>
+      </div>
+      <div className="fixed bottom-4 right-4">
+        <ChatAssistant />
       </div>
     </>
   );
