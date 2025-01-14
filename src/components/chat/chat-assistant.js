@@ -31,7 +31,7 @@ const ChatAssistant = () => {
       ) : (
         <div
           onClick={toggleChat}
-          className="bg-white dark:bg-zinc-900 border-2 w-12 h-12 rounded-full flex items-center justify-center cursor-pointer"
+          className="bg-white dark:bg-zinc-900 border-2 w-12 h-12 rounded-t-full rounded-bl-full flex items-center justify-center cursor-pointer"
         >
           <Chat size={24} />
         </div>
