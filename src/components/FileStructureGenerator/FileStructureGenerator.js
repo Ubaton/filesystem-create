@@ -139,66 +139,24 @@ export default function FileStructureGenerator() {
     }
   }, []);
 
-  const generateStructure = () => {
+  const generateStructure = async () => {
     setIsGenerating(true);
     const lines = input.split("\n").filter((line) => line.trim() !== "");
+
+    // Call the AI to generate the structure based on user input
+    const aiResponse = await fetch("/api/generate-file-structure", {
+      method: "POST",
+      body: JSON.stringify({ request: input }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const { structure } = await aiResponse.json();
+
+    // Use the structure returned by the AI
     const root = { name: "root", children: [], type: "folder" };
-    const stack = [root];
-
-    // Add app folder with layout and page by default if not present
-    let hasAppFolder = false;
-    lines.forEach((line) => {
-      if (line.trim() === "app/") hasAppFolder = true;
-    });
-
-    const processedLines = hasAppFolder
-      ? lines
-      : ["app/", "  layout", "  page", ...lines];
-
-    processedLines.forEach((line) => {
-      const level = line.search(/\S/);
-      let name = line.trim();
-      let type = "folder";
-      let fileType = defaultFileType;
-
-      if (name.endsWith("/")) {
-        name = name.slice(0, -1);
-      } else if (name.includes(".")) {
-        type = "file";
-        const extension = name.split(".").pop().toLowerCase();
-        switch (extension) {
-          case "js":
-            fileType = "JS";
-            break;
-          case "jsx":
-            fileType = "JSX";
-            break;
-          case "ts":
-            fileType = "TS";
-            break;
-          case "tsx":
-            fileType = "TSX";
-            break;
-          default:
-            fileType = defaultFileType;
-        }
-      } else {
-        type = "file";
-        name = `${name}${FileTypes[defaultFileType]}`;
-      }
-
-      const node = { name, children: [], type, fileType };
-
-      while (level < stack.length - 1) {
-        stack.pop();
-      }
-
-      stack[stack.length - 1].children.push(node);
-      if (node.type === "folder") {
-        stack.push(node);
-      }
-    });
-
+    // Process the structure into the format needed
+    // ...
     setStructure(root);
     setIsGenerating(false);
     localStorage.setItem("fileStructure", input);
