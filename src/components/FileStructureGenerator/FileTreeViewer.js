@@ -88,7 +88,7 @@ const FileTreeViewer = ({ structure }) => {
   return (
     <div id="structure-display">
       <h2 className="text-xl font-semibold mb-2 flex items-center">
-        <span> Generated Structure</span>
+        <span className="mb-2"> Generated Structure</span>
         <TooltipProvider className="flex items-center">
           <Tooltip>
             <TooltipTrigger asChild>
