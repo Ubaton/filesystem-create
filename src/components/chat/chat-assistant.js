@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { MessageCircle, X, Send } from "lucide-react";
+import { MessageCircle, X, Send, Copy, Terminal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -22,6 +22,20 @@ export default function ChatAssistant() {
   const [isLoading, setIsLoading] = useState(false);
 
   const toggleChat = () => setIsExpanded((prev) => !prev);
+
+  const copyToClipboard = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success("Copied to clipboard!");
+    } catch (err) {
+      toast.error("Failed to copy to clipboard");
+    }
+  };
+
+  const extractStructureFromSrc = (content) => {
+    const srcMatch = content.match(/src\/[\s\S]*/);
+    return srcMatch ? srcMatch[0] : '';
+  };
 
   const handleSendMessage = async () => {
     if (!userInput.trim() || isLoading) return;
@@ -44,18 +58,21 @@ export default function ChatAssistant() {
 
       const data = await response.json();
 
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
       const assistantMessage = {
-        content: data.structure || "No structure generated",
+        content: data.structure,
+        packageJson: data.packageJson,
+        copyCommand: data.copyCommand,
         isUser: false,
       };
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
       console.error("Error in handleSendMessage:", error);
       const errorMessage = {
-        content:
-          error instanceof Error
-            ? error.message
-            : "An unexpected error occurred",
+        content: error instanceof Error ? error.message : "An unexpected error occurred",
         isUser: false,
       };
       setMessages((prev) => [...prev, errorMessage]);
@@ -72,7 +89,7 @@ export default function ChatAssistant() {
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <div className="flex items-center space-x-2">
               <CardTitle className="text-xl font-bold">
-                Chat Assistant{" "}
+                Filegen AI Chat{" "}
               </CardTitle>
               <Badge className="rounded-full">Beta</Badge>
             </div>
@@ -94,52 +111,94 @@ export default function ChatAssistant() {
                     message.isUser ? "text-right" : "text-left"
                   }`}
                 >
-                  <span
+                  <div
                     className={`inline-block rounded-lg px-4 py-2 ${
                       message.isUser
                         ? "bg-primary text-primary-foreground"
-                        : "bg-muted text-muted-foreground"
+                        : "bg-muted"
                     }`}
                   >
-                    {message.content}
-                  </span>
+                    {!message.isUser && message.content && (
+                      <div className="relative">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-sm font-semibold">File Structure</span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => copyToClipboard(extractStructureFromSrc(message.content))}
+                            title="Copy structure from src/ onwards"
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        <pre className="whitespace-pre-wrap font-mono text-sm">
+                          {message.content}
+                        </pre>
+                      </div>
+                    )}
+                    {!message.isUser && message.packageJson && (
+                      <div className="mt-4">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-sm font-semibold">package.json</span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => copyToClipboard(message.packageJson)}
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        <pre className="whitespace-pre-wrap font-mono text-xs bg-black/10 p-2 rounded">
+                          {message.packageJson}
+                        </pre>
+                      </div>
+                    )}
+                    {!message.isUser && message.copyCommand && (
+                      <div className="mt-4">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-sm font-semibold">Setup Command</span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => copyToClipboard(message.copyCommand)}
+                          >
+                            <Terminal className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        <pre className="whitespace-pre-wrap font-mono text-xs bg-black/10 p-2 rounded">
+                          {message.copyCommand}
+                        </pre>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))}
             </ScrollArea>
           </CardContent>
-          <CardFooter className="pt-2">
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSendMessage();
-              }}
-              className="flex w-full items-center space-x-2"
-            >
+          <CardFooter className="p-4 pt-2">
+            <div className="flex w-full items-center space-x-2">
               <Input
-                type="text"
-                placeholder="Type your message..."
+                placeholder="Type @filegen/ProjectType..."
                 value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
-                className="flex-grow"
+                onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
                 disabled={isLoading}
               />
               <Button
-                type="submit"
                 size="icon"
-                aria-label="Send message"
+                onClick={handleSendMessage}
                 disabled={isLoading}
               >
                 <Send className="h-4 w-4" />
               </Button>
-            </form>
+            </div>
           </CardFooter>
         </Card>
       ) : (
         <Button
+          className="rounded-full h-12 w-12"
           onClick={toggleChat}
-          size="icon"
-          className="h-12 w-12 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
-          aria-label="Open chat assistant"
+          aria-label="Open chat"
         >
           <MessageCircle className="h-6 w-6" />
         </Button>
