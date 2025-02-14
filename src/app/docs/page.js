@@ -8,6 +8,7 @@ import { TemplatesSection } from "@/components/templates-section";
 import { UsageSection } from "@/components/usage-section";
 import React from "react";
 import { motion } from "framer-motion";
+import FilegenAIChat from "@/components/filegen-ai-chat";
 
 const page = () => {
   return (
@@ -59,6 +60,16 @@ const page = () => {
         </motion.section>
 
         <motion.section
+          id="aichat"
+          className="pb-12"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+        >
+          <FilegenAIChat />
+        </motion.section>
+
+        <motion.section
           id="license"
           className="pb-12"
           initial={{ opacity: 0, y: -20 }}
@@ -67,6 +78,8 @@ const page = () => {
         >
           <LicenseSection />
         </motion.section>
+
+        
       </main>
     </div>
   );

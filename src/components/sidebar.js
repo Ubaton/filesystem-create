@@ -20,14 +20,25 @@ export function Sidebar() {
             "Usage",
             "Interactive",
             "Templates",
+            { name: "AIChat", isNew: true },
             "License",
+          
           ].map((item) => (
             <Link
-              key={item}
-              href={`#${item.toLowerCase()}`}
-              className="block rounded-lg px-3 py-2 text-sm text-black dark:text-white hover:bg-zinc-900 hover:text-white"
+              key={typeof item === 'string' ? item : item.name}
+              href={`#${(typeof item === 'string' ? item : item.name).toLowerCase()}`}
+              className="block rounded-lg px-3 py-2 text-sm text-black dark:text-white hover:bg-zinc-900 hover:text-white relative"
             >
-              {item}
+              {typeof item === 'string' ? item : (
+                <div className="flex items-center">
+                  {item.name}
+                  {item.isNew && (
+                    <span className="ml-2 inline-flex items-center rounded-full bg-gradient-to-bl from-pink-400 to-violet-500 text-transparent px-2 py-0.5 text-xs font-medium text-white">
+                      New
+                    </span>
+                  )}
+                </div>
+              )}
             </Link>
           ))}
         </nav>
