@@ -88,11 +88,7 @@ const FilegenAIChat = () => {
                 </div>
             </section>
 
-            <footer className="border-t pt-6 mt-8">
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                    MIT License - feel free to use in personal and commercial projects.
-                </p>
-            </footer>
+            
         </div>
     );
 };
