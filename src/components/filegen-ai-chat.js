@@ -4,10 +4,7 @@ import { Terminal } from 'lucide-react';
 const FilegenAIChat = () => {
     return (
         <div className="w-full mx-auto p-6">
-           
-
             <section className="space-y-6">
-            
                 <div>
                     <h2 className="text-2xl font-semibold mb-4">FileGen AI Chat</h2>
                     <p className="mb-4">FileGen uses a simple syntax to generate project structures with Filegen AI Chat:</p>
@@ -72,7 +69,7 @@ const FilegenAIChat = () => {
                     <h2 className="text-2xl font-semibold mb-4">Next.js Integration</h2>
                     <div className="bg-zinc-900 p-4 rounded-lg mb-4">
                         <code className="text-white text-sm">
-                            npx create-next-app@latest [project-name] --typescript --tailwind --eslint --app --src-dir --import-alias "@/*"
+                            npx create-next-app@latest [project-name] --typescript --tailwind --eslint --app --src-dir --import-alias &quot;@/*&quot;
                         </code>
                     </div>
                 </div>
@@ -87,8 +84,6 @@ const FilegenAIChat = () => {
                     </ul>
                 </div>
             </section>
-
-            
         </div>
     );
 };
