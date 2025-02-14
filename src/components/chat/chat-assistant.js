@@ -15,6 +15,90 @@ import {
 import { toast } from "sonner";
 import { Badge } from "../ui/badge";
 
+const MessageContent = ({ message, onCopy }) => {
+  if (message.isUser) {
+    return (
+      <div className="bg-primary text-primary-foreground rounded-lg px-4 py-2">
+        {message.content}
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-muted rounded-lg px-4 py-2 space-y-4">
+      {message.fileStructure && (
+        <div className="relative">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-sm font-semibold">File Structure</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onCopy(message.fileStructure, "structure")}
+              title="Copy file structure"
+            >
+              <Copy className="h-4 w-4" />
+            </Button>
+          </div>
+          <pre className="whitespace-pre-wrap font-mono text-sm overflow-x-auto bg-black/5 p-2 rounded">
+            {message.fileStructure}
+          </pre>
+        </div>
+      )}
+      {message.explanation && (
+        <div className="relative mt-4">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-sm font-semibold">Explanation</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onCopy(message.explanation, "explanation")}
+            >
+              <Copy className="h-4 w-4" />
+            </Button>
+          </div>
+          <div className="text-sm prose prose-sm max-w-none">
+            {message.explanation}
+          </div>
+        </div>
+      )}
+      {message.packageJson && (
+        <div className="mt-4">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-sm font-semibold">package.json</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onCopy(message.packageJson, "package")}
+            >
+              <Copy className="h-4 w-4" />
+            </Button>
+          </div>
+          <pre className="whitespace-pre-wrap font-mono text-xs bg-black/10 p-2 rounded">
+            {message.packageJson}
+          </pre>
+        </div>
+      )}
+      {message.copyCommand && (
+        <div className="mt-4">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-sm font-semibold">Setup Command</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onCopy(message.copyCommand, "command")}
+            >
+              <Terminal className="h-4 w-4" />
+            </Button>
+          </div>
+          <pre className="whitespace-pre-wrap font-mono text-xs bg-black/10 p-2 rounded">
+            {message.copyCommand}
+          </pre>
+        </div>
+      )}
+    </div>
+  );
+};
+
 export default function ChatAssistant() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [userInput, setUserInput] = useState("");
@@ -23,18 +107,29 @@ export default function ChatAssistant() {
 
   const toggleChat = () => setIsExpanded((prev) => !prev);
 
-  const copyToClipboard = async (text) => {
+  const handleCopy = async (text, type) => {
     try {
-      await navigator.clipboard.writeText(text);
-      toast.success("Copied to clipboard!");
+      let contentToCopy = text;
+      if (type === "structure") {
+        // Extract only the src/ directory structure
+        const srcMatch = text.match(/src\/[\s\S]*/);
+        contentToCopy = srcMatch ? srcMatch[0].replace(/\*\*.*?\*\*/g, "").trim() : text;
+      }
+      
+      await navigator.clipboard.writeText(contentToCopy);
+      toast.success(`Copied ${type} to clipboard!`);
     } catch (err) {
       toast.error("Failed to copy to clipboard");
     }
   };
 
-  const extractStructureFromSrc = (content) => {
-    const srcMatch = content.match(/src\/[\s\S]*/);
-    return srcMatch ? srcMatch[0] : '';
+  const parseResponse = (response) => {
+    // Split structure and explanation
+    const parts = response.split(/\*\*Explanation of Choices:\*\*/);
+    return {
+      fileStructure: parts[0].trim(),
+      explanation: parts[1] ? parts[1].trim() : null
+    };
   };
 
   const handleSendMessage = async () => {
@@ -62,8 +157,11 @@ export default function ChatAssistant() {
         throw new Error(data.error);
       }
 
+      const { fileStructure, explanation } = parseResponse(data.structure);
+      
       const assistantMessage = {
-        content: data.structure,
+        fileStructure,
+        explanation,
         packageJson: data.packageJson,
         copyCommand: data.copyCommand,
         isUser: false,
@@ -111,66 +209,7 @@ export default function ChatAssistant() {
                     message.isUser ? "text-right" : "text-left"
                   }`}
                 >
-                  <div
-                    className={`inline-block rounded-lg px-4 py-2 ${
-                      message.isUser
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted"
-                    }`}
-                  >
-                    {!message.isUser && message.content && (
-                      <div className="relative">
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-sm font-semibold">File Structure</span>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => copyToClipboard(extractStructureFromSrc(message.content))}
-                            title="Copy structure from src/ onwards"
-                          >
-                            <Copy className="h-4 w-4" />
-                          </Button>
-                        </div>
-                        <pre className="whitespace-pre-wrap font-mono text-sm">
-                          {message.content}
-                        </pre>
-                      </div>
-                    )}
-                    {!message.isUser && message.packageJson && (
-                      <div className="mt-4">
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-sm font-semibold">package.json</span>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => copyToClipboard(message.packageJson)}
-                          >
-                            <Copy className="h-4 w-4" />
-                          </Button>
-                        </div>
-                        <pre className="whitespace-pre-wrap font-mono text-xs bg-black/10 p-2 rounded">
-                          {message.packageJson}
-                        </pre>
-                      </div>
-                    )}
-                    {!message.isUser && message.copyCommand && (
-                      <div className="mt-4">
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-sm font-semibold">Setup Command</span>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => copyToClipboard(message.copyCommand)}
-                          >
-                            <Terminal className="h-4 w-4" />
-                          </Button>
-                        </div>
-                        <pre className="whitespace-pre-wrap font-mono text-xs bg-black/10 p-2 rounded">
-                          {message.copyCommand}
-                        </pre>
-                      </div>
-                    )}
-                  </div>
+                  <MessageContent message={message} onCopy={handleCopy} />
                 </div>
               ))}
             </ScrollArea>
