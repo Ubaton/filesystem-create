@@ -1,0 +1,26 @@
+const baseUrl = "https://filegen.vercel.app/";
+
+export default async function sitemap() {
+  // Get a consistent timestamp for all routes
+  const currentTime = new Date().toISOString();
+
+  // Define routes with explicit priorities
+  const routeConfigs = [
+    { route: "", priority: 1.0 },
+    { route: "/docs", priority: 0.8 },
+    { route: "/generate-file", priority: 0.8 },
+    { route: "/project-file", priority: 0.8 },
+    { route: "/learn-more", priority: 0.8 },
+    { route: "/license", priority: 0.8 },
+  ];
+
+  // Map each route to its sitemap object
+  const routes = routeConfigs.map(({ route, priority }) => ({
+    url: `${baseUrl}${route}`,
+    lastModified: currentTime,
+    changeFrequency: "weekly",
+    priority,
+  }));
+
+  return routes;
+}

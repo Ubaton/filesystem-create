@@ -1,0 +1,19 @@
+const baseUrl = "https://filegen.vercel.app/";
+
+export default function robots() {
+  const rules = [
+    {
+      userAgent: "*",
+      allow: "/",
+      disallow: ["/private/", "/admin/"],
+      crawlDelay: 10, // Optional: Adjust crawl delay (in seconds) as needed
+    },
+    // Additional rules for specific user agents can be added here
+  ];
+
+  return {
+    rules,
+    sitemap: `${baseUrl}/sitemap.xml`,
+    host: baseUrl, // Explicitly define the host
+  };
+}
