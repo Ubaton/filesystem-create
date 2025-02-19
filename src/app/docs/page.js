@@ -1,4 +1,4 @@
-"use cache";
+"use client";
 
 import { InstallationSection } from "@/components/installation-section";
 import { InteractiveSelectionSection } from "@/components/interactive-selection-section";
@@ -9,19 +9,6 @@ import { UsageSection } from "@/components/usage-section";
 import React from "react";
 import { motion } from "framer-motion";
 import FilegenAIChat from "@/components/filegen-ai-chat";
-import { metadataFilegen } from "../metadata";
-
-export const metadata = {
-  title: metadataFilegen.title,
-  description: metadataFilegen.description,
-  keywords: metadataFilegen.keywords,
-  authors: metadataFilegen.authors,
-  creator: metadataFilegen.creator,
-  publisher: metadataFilegen.publisher,
-  formatDetection: metadataFilegen.formatDetection,
-  openGraph: metadataFilegen.openGraph,
-  twitter: metadataFilegen.twitter,
-};
 
 const page = () => {
   return (
