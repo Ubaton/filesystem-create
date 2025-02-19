@@ -7,6 +7,7 @@ import Navigation from "../components/Navbar/Navigation";
 import Footer from "../components/Footer/Footer";
 import { Toaster } from "sonner";
 import ScrollToTop from "../components/ui/sroll-to-top";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from "@vercel/analytics/react";
 import { metadataFilegen } from "./metadata";
 
@@ -42,6 +43,7 @@ export default function RootLayout({ children }) {
             <ScrollToTop />
             <Toaster position="top-center" />
           </ThemeProvider>
+          <SpeedInsights />
         </body>
       </html>
       <Analytics />
