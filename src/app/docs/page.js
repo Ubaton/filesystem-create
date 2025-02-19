@@ -1,4 +1,4 @@
-"use client";
+"use cache";
 
 import { InstallationSection } from "@/components/installation-section";
 import { InteractiveSelectionSection } from "@/components/interactive-selection-section";
