@@ -1,6 +1,6 @@
 const baseUrl = "https://filegen.vercel.app/";
 
-export const metadata = {
+export const metadataFilegen = {
   metadataBase: new URL(baseUrl),
   title: {
     default: "Filegen - File Structure Generator",
@@ -67,4 +67,4 @@ export const metadata = {
   },
 };
 
-export default metadata;
+export default metadataFilegen;

@@ -8,6 +8,7 @@ import Footer from "../components/Footer/Footer";
 import { Toaster } from "sonner";
 import ScrollToTop from "../components/ui/sroll-to-top";
 import { Analytics } from "@vercel/analytics/react";
+import { metadataFilegen } from "./metadata";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -20,10 +21,11 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
+const Filegen =  metadataFilegen
+
 export const metadata = {
-  title: "File Structure Generator",
-  description:
-    "File Structure Generator built with Next.js and React. It allows users to create and visualize file structures, and generate downloadable ZIP files based on the input",
+  title: Filegen.title,
+  description: Filegen.description,
 };
 
 export default function RootLayout({ children }) {
