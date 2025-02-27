@@ -28,7 +28,15 @@ const FileTypes = {
 };
 
 const generateBoilerplate = (name, fileType) => {
-  const componentName = name.split(".")[0];
+  // Extract the base name without extension
+  const baseName = name.split(".")[0];
+  
+  // Convert kebab-case (with dashes) to PascalCase
+  const componentName = baseName
+    .split("-")
+    .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+    .join("");
+  
   switch (fileType) {
     case "JS":
     case "JSX":
