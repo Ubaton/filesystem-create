@@ -208,7 +208,7 @@ export default function ChatAssistant() {
   return (
     <div className="fixed bottom-4 right-4 z-50">
       {isExpanded ? (
-        <Card className="w-96 h-[32rem] flex flex-col shadow-xl rounded-3xl border-0 transition-all duration-300 ease-in-out overflow-hidden">
+        <Card className="w-full sm:w-96 h-[32rem] max-w-[calc(100vw-2rem)] flex flex-col shadow-xl rounded-3xl border-0 transition-all duration-300 ease-in-out overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 border-b">
             <div className="flex items-center space-x-2">
             <Image src={Logo} alt="FileGen Logo" width={25} height={25} priority={true} quality={100} />
