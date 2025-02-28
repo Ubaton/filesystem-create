@@ -255,13 +255,13 @@ export default function ChatAssistant() {
                 onChange={(e) => setUserInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
                 disabled={isLoading}
-                className="rounded-full border-muted-foreground/20 focus-visible:ring-primary"
+                className="flex-grow rounded-full border border-muted-foreground/20 bg-background px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2"
               />
               <Button
                 size="icon"
                 onClick={handleSendMessage}
                 disabled={isLoading}
-                className="rounded-full h-10 w-10 bg-primary hover:bg-primary/90 shadow-sm"
+                className="rounded-full h-10 w-10 bg-primary hover:bg-primary/90 shadow-sm flex-shrink-0"
               >
                 <Send className="h-4 w-4" />
               </Button>
