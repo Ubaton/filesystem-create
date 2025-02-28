@@ -231,8 +231,8 @@ export default function ChatAssistant() {
             <ScrollArea className="h-full px-4">
               {messages.length === 0 ? (
                 <div className="h-full flex items-center justify-center flex-col text-center p-6">
-                  <div className="rounded-full bg-primary/10 p-3 mb-4">
-                    <MessageCircle className="h-6 w-6 text-primary" />
+                  <div className="rounded-full bg-primary/10 p-2 mb-4">
+                  <Image src={Logo} alt="FileGen Logo" width={40} height={40} priority={true} quality={100} />
                   </div>
                   <p className="text-muted-foreground">
                     Ask for a file structure using @filegen/ProjectType
