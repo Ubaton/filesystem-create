@@ -32,6 +32,7 @@ export default function FileType() {
           toast.custom(
             (t) => (
               <motion.div
+                key={`toast-${key}`}
                 initial={{ opacity: 0, y: 50, scale: 0.3 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
@@ -81,62 +82,68 @@ export default function FileType() {
           />
         </div>
       </div>
-      <AnimatePresence>
-        <motion.div
-          layout
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-6"
+      <div>
+        <AnimatePresence>
+          <motion.div
+            key="structures-grid"
+            layout
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-6"
+          >
+            {filteredStructures.map(([key, structure]) => (
+              <motion.div
+                key={`structure-${key}`}
+                layout
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.2 }}
+                className="border rounded-lg p-4 bg-card shadow-sm"
+              >
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-bold capitalize">
+                    {key} Structure
+                  </h2>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleCopy(key, structure)}
+                    disabled={copyingStructure !== null}
+                    aria-label={
+                      copyingStructure === key
+                        ? `Copying ${key} structure`
+                        : `Copy ${key} structure`
+                    }
+                  >
+                    {copyingStructure === key ? (
+                      <Loader2 className="animate-spin" size={20} />
+                    ) : (
+                      <Copy size={20} />
+                    )}
+                    <span className="sr-only">
+                      {copyingStructure === key ? "Copying" : "Copy"}
+                    </span>
+                  </Button>
+                </div>
+                <div className="bg-secondary p-4 rounded-lg overflow-auto max-h-80">
+                  <StructureTree structure={structure} />
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </AnimatePresence>
+        <Separator key="separator" />
+        <div
+          key="pro-structures-header"
+          className="flex flex-col justify-center items-center my-6"
         >
-          {filteredStructures.map(([key, structure]) => (
-            <motion.div
-              key={key}
-              layout
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.2 }}
-              className="border rounded-lg p-4 bg-card shadow-sm"
-            >
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold capitalize">
-                  {key} Structure
-                </h2>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleCopy(key, structure)}
-                  disabled={copyingStructure !== null}
-                  aria-label={
-                    copyingStructure === key
-                      ? `Copying ${key} structure`
-                      : `Copy ${key} structure`
-                  }
-                >
-                  {copyingStructure === key ? (
-                    <Loader2 className="animate-spin" size={20} />
-                  ) : (
-                    <Copy size={20} />
-                  )}
-                  <span className="sr-only">
-                    {copyingStructure === key ? "Copying" : "Copy"}
-                  </span>
-                </Button>
-              </div>
-              <div className="bg-secondary p-4 rounded-lg overflow-auto max-h-80">
-                <StructureTree structure={structure} />
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
-        <Separator />
-        <div className="flex flex-col justify-center items-center my-6">
           <h2 className="text-2xl font-bold mb-4">Pro Structures</h2>
           <p className="text-muted-foreground text-center">
             These structures are meticulously crafted and tailored for optimal
             real-world application.
           </p>
         </div>
-        <ProFileType searchTerm={searchTerm} />
-      </AnimatePresence>
+        <ProFileType key="pro-file-type" searchTerm={searchTerm} />
+      </div>
     </div>
   );
 }

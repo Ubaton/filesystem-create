@@ -1,4 +1,4 @@
-"use cache";
+"use client";
 
 import { Sidebar } from "@/components/sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";

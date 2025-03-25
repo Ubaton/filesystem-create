@@ -1,4 +1,4 @@
-"use cache";
+"use client";
 
 import { useRef, useEffect } from "react";
 

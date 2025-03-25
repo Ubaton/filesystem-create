@@ -1,5 +1,3 @@
-"use cache";
-
 import localFont from "next/font/local";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
@@ -7,7 +5,7 @@ import Navigation from "../components/Navbar/Navigation";
 import Footer from "../components/Footer/Footer";
 import { Toaster } from "sonner";
 import ScrollToTop from "../components/ui/sroll-to-top";
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import { metadataFilegen } from "./metadata";
 
@@ -22,7 +20,7 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-const Filegen =  metadataFilegen
+const Filegen = metadataFilegen;
 
 export const metadata = {
   title: Filegen.title,
@@ -31,22 +29,20 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <>
-      <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <Navigation />
-            <main>{children}</main>
-            <Footer />
-            <ScrollToTop />
-            <Toaster position="top-center" />
-          </ThemeProvider>
-          <SpeedInsights />
-        </body>
-      </html>
-      <Analytics />
-    </>
+    <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <Navigation />
+          <main>{children}</main>
+          <Footer />
+          <ScrollToTop />
+          <Toaster position="top-center" />
+        </ThemeProvider>
+        <SpeedInsights />
+        <Analytics />
+      </body>
+    </html>
   );
 }

@@ -9,9 +9,10 @@ const ThemeToggle = () => {
   const { setTheme, resolvedTheme } = useTheme();
 
   const handleToggle = () => {
-    "use cache"
     setTheme(resolvedTheme === "dark" ? "light" : "dark");
   };
+
+  const isDarkMode = resolvedTheme === "dark";
 
   return (
     <button
@@ -19,9 +20,9 @@ const ThemeToggle = () => {
       className={`
         relative h-6 w-11 rounded-full p-1
         transition-colors duration-200
-        ${resolvedTheme === "dark" ? "bg-zinc-700" : "bg-zinc-200"}
+        ${isDarkMode ? "bg-zinc-700" : "bg-zinc-200"}
       `}
-      aria-label="Toggle theme"
+      aria-label={`Switch to ${isDarkMode ? "light" : "dark"} mode`}
     >
       <motion.div
         className={`
@@ -29,13 +30,13 @@ const ThemeToggle = () => {
           rounded-full bg-white shadow-sm
         `}
         initial={{ x: 0 }}
-        animate={{ x: resolvedTheme === "dark" ? 19 : 0 }}
+        animate={{ x: isDarkMode ? 19 : 0 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
-        {resolvedTheme === "dark" ? (
-          <Moon className="h-3 w-3 text-slate-700" />
+        {isDarkMode ? (
+          <Moon className="h-3 w-3 text-zinc-600" />
         ) : (
-          <Sun className="h-3 w-3 text-yellow-500" />
+          <Sun className="h-3 w-3 text-amber-500" />
         )}
       </motion.div>
     </button>

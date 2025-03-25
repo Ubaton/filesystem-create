@@ -30,13 +30,13 @@ const FileTypes = {
 const generateBoilerplate = (name, fileType) => {
   // Extract the base name without extension
   const baseName = name.split(".")[0];
-  
+
   // Convert kebab-case (with dashes) to PascalCase
   const componentName = baseName
     .split("-")
-    .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join("");
-  
+
   switch (fileType) {
     case "JS":
     case "JSX":
@@ -86,7 +86,7 @@ export default function FileStructureGenerator() {
   }, []);
 
   const generateStructure = async () => {
-    "use cache";
+    "use client";
     setIsGenerating(true);
     const lines = input.split("\n").filter((line) => line.trim() !== "");
     const root = { name: "root", children: [], type: "folder" };
