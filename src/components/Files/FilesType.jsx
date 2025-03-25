@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import { Check, Loader2, Search } from "lucide-react";
 import { Copy } from "@mynaui/icons-react";
 import { structures } from "@/templates/projectStructures";
-import { proStructure } from "@/templates/proProjectStuctres";
 import StructureTree from "./StructureTree";
 import { Separator } from "../ui/separator";
 import ProFileType from "./ProFileType";
