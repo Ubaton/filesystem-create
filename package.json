@@ -48,10 +48,10 @@
     "inquirer": "^11.1.0",
     "jszip": "^3.10.1",
     "lucide-react": "^0.446.0",
-    "next": "14.2.13",
+    "next": "^15.2.4",
     "next-themes": "^0.3.0",
-    "react": "^18",
-    "react-dom": "^18",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "react-hot-toast": "^2.4.1",
     "react-icons": "^5.3.0",
     "sharp": "^0.33.5",
@@ -61,7 +61,7 @@
   },
   "devDependencies": {
     "eslint": "^8",
-    "eslint-config-next": "14.2.13",
+    "eslint-config-next": "^15.2.4",
     "postcss": "^8",
     "tailwindcss": "^3.4.1"
   }
