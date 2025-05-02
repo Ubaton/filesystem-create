@@ -4,52 +4,52 @@ import { proStructure } from "@/templates/proProjectStuctres";
 
 const getDependencies = (projectType) => {
   const commonDeps = {
-    "next": "^14.1.0",
-    "react": "^18.2.0",
+    next: "^14.1.0",
+    react: "^18.2.0",
     "react-dom": "^18.2.0",
-    "typescript": "^5.3.3",
+    typescript: "^5.3.3",
     "@types/node": "^20.11.5",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
-    "autoprefixer": "^10.4.17",
-    "postcss": "^8.4.33",
-    "tailwindcss": "^3.4.1"
+    autoprefixer: "^10.4.17",
+    postcss: "^8.4.33",
+    tailwindcss: "^3.4.1",
   };
 
   const projectDeps = {
     blog: {
-      "mdx": "^0.2.3",
+      mdx: "^0.2.3",
       "@mdx-js/loader": "^3.0.0",
       "@mdx-js/react": "^3.0.0",
       "gray-matter": "^4.0.3",
-      "remark": "^15.0.1",
-      "remark-html": "^16.0.1"
+      remark: "^15.0.1",
+      "remark-html": "^16.0.1",
     },
     ecommerce: {
       "@stripe/stripe-js": "^2.4.0",
-      "stripe": "^14.14.0",
+      stripe: "^14.14.0",
       "@prisma/client": "^5.8.1",
-      "prisma": "^5.8.1"
+      prisma: "^5.8.1",
     },
     portfolio: {
       "framer-motion": "^10.18.0",
-      "three": "^0.160.0",
-      "@react-three/fiber": "^8.15.14"
-    }
+      three: "^0.160.0",
+      "@react-three/fiber": "^8.15.14",
+    },
   };
 
   return {
     dependencies: {
       ...commonDeps,
-      ...(projectDeps[projectType.toLowerCase()] || {})
-    }
+      ...(projectDeps[projectType.toLowerCase()] || {}),
+    },
   };
 };
 
 export async function POST(req) {
   try {
     const { request } = await req.json();
-    
+
     // Parse @filegen/ProjectType syntax
     const match = request.match(/@filegen\/([\w-]+)/);
     if (!match) {
@@ -63,14 +63,17 @@ export async function POST(req) {
     const genAI = new GoogleGenerativeAI(
       process.env.NEXT_PUBLIC_CHAT_FILE_GENERATE
     );
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
     // Combine all templates
     const allTemplates = { ...structures, ...proStructure };
-    
+
     // Create a context from all templates
     const templateContext = Object.entries(allTemplates)
-      .map(([name, structure]) => `Project Type: ${name}\nStructure:\n${structure}\n---\n`)
+      .map(
+        ([name, structure]) =>
+          `Project Type: ${name}\nStructure:\n${structure}\n---\n`
+      )
       .join("\n");
 
     // Create the prompt
@@ -111,18 +114,18 @@ Generate the structure now:`;
       version: "0.1.0",
       private: true,
       scripts: {
-        "dev": "next dev",
-        "build": "next build",
-        "start": "next start",
-        "lint": "next lint"
+        dev: "next dev",
+        build: "next build",
+        start: "next start",
+        lint: "next lint",
       },
-      ...dependencies
+      ...dependencies,
     };
 
-    return Response.json({ 
+    return Response.json({
       structure,
       packageJson: JSON.stringify(packageJson, null, 2),
-      copyCommand: `npx create-next-app@latest ${projectType.toLowerCase()} --typescript --tailwind --eslint --app --src-dir --import-alias "@/*"` 
+      copyCommand: `npx create-next-app@latest ${projectType.toLowerCase()} --typescript --tailwind --eslint --app --src-dir --import-alias "@/*"`,
     });
   } catch (error) {
     console.error("Error generating structure:", error);
