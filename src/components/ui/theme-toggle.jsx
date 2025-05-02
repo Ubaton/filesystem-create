@@ -1,16 +1,34 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { motion } from "framer-motion";
+import { Button } from "./button";
 
 const ThemeToggle = () => {
   const { setTheme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleToggle = () => {
     setTheme(resolvedTheme === "dark" ? "light" : "dark");
   };
+
+  if (!mounted) {
+    return (
+      <Button
+        className="relative h-6 w-11 rounded-full p-1 bg-zinc-200"
+        aria-label="Switch theme"
+        disabled
+      >
+        <div className="absolute top-1 flex h-4 w-4 items-center justify-center rounded-full bg-white shadow-sm" />
+      </Button>
+    );
+  }
 
   const isDarkMode = resolvedTheme === "dark";
 

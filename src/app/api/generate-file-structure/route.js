@@ -1,6 +1,8 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { structures } from "@/templates/projectStructures";
 import { proStructure } from "@/templates/proProjectStuctres";
+import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebaseConfig";
 
 const getDependencies = (projectType) => {
   const commonDeps = {
@@ -46,6 +48,39 @@ const getDependencies = (projectType) => {
   };
 };
 
+const storeGeneratedStructure = async (projectType, structure, packageJson) => {
+  try {
+    const docRef = await addDoc(collection(db, "generatedStructures"), {
+      projectType,
+      structure,
+      packageJson,
+      timestamp: new Date().toISOString(),
+      usageCount: 1,
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error("Error storing structure:", error);
+    return null;
+  }
+};
+
+const getSimilarStructures = async (projectType) => {
+  try {
+    const q = query(
+      collection(db, "generatedStructures"),
+      where("projectType", "==", projectType)
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+  } catch (error) {
+    console.error("Error fetching similar structures:", error);
+    return [];
+  }
+};
+
 export async function POST(req) {
   try {
     const { request } = await req.json();
@@ -60,26 +95,41 @@ export async function POST(req) {
     }
 
     const projectType = match[1];
-    const genAI = new GoogleGenerativeAI(
-      process.env.NEXT_PUBLIC_CHAT_FILE_GENERATE
-    );
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-    // Combine all templates
-    const allTemplates = { ...structures, ...proStructure };
+    // Get similar structures from Firebase
+    const similarStructures = await getSimilarStructures(projectType);
 
-    // Create a context from all templates
-    const templateContext = Object.entries(allTemplates)
+    // Create context from existing templates and similar structures
+    const templateContext = Object.entries({ ...structures, ...proStructure })
       .map(
         ([name, structure]) =>
           `Project Type: ${name}\nStructure:\n${structure}\n---\n`
       )
       .join("\n");
 
-    // Create the prompt
+    const similarStructuresContext = similarStructures
+      .map(
+        (doc) =>
+          `Project Type: ${doc.projectType}\nStructure:\n${doc.structure}\n---\n`
+      )
+      .join("\n");
+
+    const genAI = new GoogleGenerativeAI(
+      process.env.NEXT_PUBLIC_CHAT_FILE_GENERATE
+    );
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
+    // Create the prompt with both template and similar structures context
     const prompt = `You are a file structure generator. Below are examples of different project structures:
 
 ${templateContext}
+
+${
+  similarStructures.length > 0
+    ? `Here are some previously generated structures for similar projects:
+${similarStructuresContext}`
+    : ""
+}
 
 Based on these examples, generate a detailed file structure for a "${projectType}" project. 
 Follow these rules:
@@ -121,6 +171,9 @@ Generate the structure now:`;
       },
       ...dependencies,
     };
+
+    // Store the generated structure in Firebase
+    await storeGeneratedStructure(projectType, structure, packageJson);
 
     return Response.json({
       structure,
