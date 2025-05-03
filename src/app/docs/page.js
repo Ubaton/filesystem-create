@@ -13,7 +13,7 @@ import FilegenAIChat from "@/components/filegen-ai-chat";
 const page = () => {
   return (
     <div className="flex justify-center items-start min-h-screen w-full">
-      <main className="w-full max-w-7xl mx-auto space-y-6 md:space-y-12 p-4 md:p-8">
+      <main className="w-full mx-auto space-y-6 md:space-y-12 p-4 md:p-8">
         <motion.section
           id="introduction"
           className="w-full"
