@@ -62,7 +62,7 @@ export default function FileType() {
   };
 
   return (
-    <div className="p-4 md:p-8 min-h-screen bg-background">
+    <div className="p-4 md:p-8 min-h-screen bg-background container">
       <h1 className="text-3xl font-bold mb-6 text-center">
         Project Structures
       </h1>
