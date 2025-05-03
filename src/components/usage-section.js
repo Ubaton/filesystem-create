@@ -30,23 +30,29 @@ export function UsageSection() {
   };
 
   return (
-    <div className="space-y-6 w-full">
-      <h1 className="font-heading text-3xl md:text-4xl">Usage</h1>
-      <p className="text-xl text-muted-foreground">
+    <div className="space-y-4 sm:space-y-6 w-full">
+      <h1 className="font-heading text-2xl sm:text-3xl md:text-4xl">Usage</h1>
+      <p className="text-sm sm:text-base text-muted-foreground">
         Learn how to use FileGen to generate file structures for your projects.
       </p>
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card className="shadow-none">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2">
+        <Card className="shadow-none hover:shadow-md transition-shadow duration-200">
           <CardHeader>
-            <CardTitle>Run the interactive CLI</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-base sm:text-lg">
+              Run the interactive CLI
+            </CardTitle>
+            <CardDescription className="text-sm">
               Use the command-line interface to select templates interactively
             </CardDescription>
           </CardHeader>
           <CardContent>
             <pre className="flex items-center justify-between bg-muted p-2 px-4 rounded-md overflow-x-auto">
-              <code>filegen</code>
-              <button onClick={handleCopyCLI} aria-label="Copy command">
+              <code className="text-sm">filegen</code>
+              <button
+                onClick={handleCopyCLI}
+                aria-label="Copy command"
+                className="ml-4"
+              >
                 {copiedCLI ? (
                   <motion.div
                     initial={{ scale: 0 }}
@@ -54,26 +60,32 @@ export function UsageSection() {
                     exit={{ scale: 0 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <CheckCircleOne color="#10b981" />
+                    <CheckCircleOne className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" />
                   </motion.div>
                 ) : (
-                  <Copy />
+                  <Copy className="w-4 h-4 sm:w-5 sm:h-5" />
                 )}
               </button>
             </pre>
           </CardContent>
         </Card>
-        <Card className="shadow-none">
+        <Card className="shadow-none hover:shadow-md transition-shadow duration-200">
           <CardHeader>
-            <CardTitle>Specify a template directly</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-base sm:text-lg">
+              Specify a template directly
+            </CardTitle>
+            <CardDescription className="text-sm">
               Generate files for a specific template without interaction
             </CardDescription>
           </CardHeader>
           <CardContent>
             <pre className="flex items-center justify-between bg-muted p-2 px-4 rounded-md overflow-x-auto">
-              <code>filegen --template e-commerce</code>
-              <button onClick={handleCopyTemplate} aria-label="Copy command">
+              <code className="text-sm">filegen --template e-commerce</code>
+              <button
+                onClick={handleCopyTemplate}
+                aria-label="Copy command"
+                className="ml-4"
+              >
                 {copiedTemplate ? (
                   <motion.div
                     initial={{ scale: 0 }}
@@ -81,10 +93,10 @@ export function UsageSection() {
                     exit={{ scale: 0 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <CheckCircleOne color="#10b981" />
+                    <CheckCircleOne className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" />
                   </motion.div>
                 ) : (
-                  <Copy />
+                  <Copy className="w-4 h-4 sm:w-5 sm:h-5" />
                 )}
               </button>
             </pre>

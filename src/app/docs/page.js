@@ -12,10 +12,11 @@ import FilegenAIChat from "@/components/filegen-ai-chat";
 
 const page = () => {
   return (
-    <div className="flex justify-center items-center min-h-screen w-full">
-      <main className="w-full mx-auto space-y-6 md:space-y-12 p-4 md:p-8">
+    <div className="flex justify-center items-start min-h-screen w-full">
+      <main className="w-full max-w-7xl mx-auto space-y-6 md:space-y-12 p-4 md:p-8">
         <motion.section
           id="introduction"
+          className="w-full"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -25,6 +26,7 @@ const page = () => {
 
         <motion.section
           id="installation"
+          className="w-full"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
@@ -34,6 +36,7 @@ const page = () => {
 
         <motion.section
           id="usage"
+          className="w-full"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
@@ -43,6 +46,7 @@ const page = () => {
 
         <motion.section
           id="interactive"
+          className="w-full"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
@@ -52,6 +56,7 @@ const page = () => {
 
         <motion.section
           id="templates"
+          className="w-full"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
@@ -61,7 +66,7 @@ const page = () => {
 
         <motion.section
           id="aichat"
-          className="pb-12"
+          className="w-full pb-12"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.5 }}
@@ -71,15 +76,13 @@ const page = () => {
 
         <motion.section
           id="license"
-          className="pb-12"
+          className="w-full pb-12"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.5 }}
         >
           <LicenseSection />
         </motion.section>
-
-        
       </main>
     </div>
   );
