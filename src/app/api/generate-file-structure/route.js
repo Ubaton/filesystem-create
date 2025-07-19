@@ -81,20 +81,58 @@ const getSimilarStructures = async (projectType) => {
   }
 };
 
+// Utility to clean up structure output
+function cleanStructure(structure) {
+  const testPatterns = [
+    /__tests__/i,
+    /\.test\./i,
+    /\.spec\./i,
+    /\/tests?\//i,
+    /\/__mocks__\//i,
+    /\/__snapshots__\//i,
+    /\/coverage\//i,
+    /jest\.config/i,
+    /vitest\.config/i,
+    /cypress\//i,
+    /playwright\//i,
+    /test-utils?/i,
+    /\/test\//i,
+  ];
+  return structure
+    .split("\n")
+    .filter(
+      (line) =>
+        !testPatterns.some((pattern) => pattern.test(line)) &&
+        !line.trim().startsWith("*") &&
+        !line.trim().startsWith("//") &&
+        !line.trim().startsWith("#") &&
+        !line.trim().toLowerCase().startsWith("key improvements") &&
+        !line.trim().toLowerCase().startsWith("explanation") &&
+        line.trim() !== ""
+    )
+    .join("\n");
+}
+
 export async function POST(req) {
   try {
     const { request } = await req.json();
 
-    // Parse @filegen/ProjectType syntax
+    // Accept both @filegen/ProjectType and ProjectType
+    let projectType = null;
     const match = request.match(/@filegen\/([\w-]+)/);
-    if (!match) {
+    if (match) {
+      projectType = match[1];
+    } else if (/^[a-zA-Z0-9_-]+$/.test(request)) {
+      projectType = request;
+    } else {
       return Response.json(
-        { error: "Invalid syntax. Use @filegen/ProjectType format." },
+        {
+          error:
+            "Invalid syntax. Use @filegen/ProjectType or ProjectType format.",
+        },
         { status: 400 }
       );
     }
-
-    const projectType = match[1];
 
     // Get similar structures from Firebase
     const similarStructures = await getSimilarStructures(projectType);
@@ -153,7 +191,8 @@ Generate the structure now:`;
     });
 
     const result = await chat.sendMessage(projectType);
-    const structure = result.response.text();
+    let structure = result.response.text();
+    structure = cleanStructure(structure);
 
     // Get dependencies for the project type
     const dependencies = getDependencies(projectType);
