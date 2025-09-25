@@ -1,7 +1,17 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Copy, Download } from "lucide-react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import {
+  Copy,
+  Download,
+  Upload,
+  Save,
+  Trash2,
+  Settings,
+  FileText,
+  Folder,
+  AlertCircle,
+} from "lucide-react";
 import JSZip from "jszip";
 import FileSaver from "file-saver";
 import { Button } from "@/components/ui/button";
@@ -15,180 +25,491 @@ import {
 } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Noise from "../ui/noise";
 import InputSection from "./InputSection";
 import FileTreeViewer from "./FileTreeViewer";
-import ChatAssistant from "../chat/chat-assistant";
-import Noise from "../ui/noise";
 
-const FileTypes = {
-  JS: ".js",
-  JSX: ".jsx",
-  TS: ".ts",
-  TSX: ".tsx",
+const FILE_TYPES = {
+  JS: {
+    extension: ".js",
+    label: "JavaScript",
+    template: "javascript",
+  },
+  JSX: {
+    extension: ".jsx",
+    label: "React JSX",
+    template: "react-js",
+  },
+  TS: {
+    extension: ".ts",
+    label: "TypeScript",
+    template: "typescript",
+  },
+  TSX: {
+    extension: ".tsx",
+    label: "React TSX",
+    template: "react-ts",
+  },
+  PY: {
+    extension: ".py",
+    label: "Python",
+    template: "python",
+  },
+  HTML: {
+    extension: ".html",
+    label: "HTML",
+    template: "html",
+  },
+  CSS: {
+    extension: ".css",
+    label: "CSS",
+    template: "css",
+  },
+  JSON: {
+    extension: ".json",
+    label: "JSON",
+    template: "json",
+  },
+  MD: {
+    extension: ".md",
+    label: "Markdown",
+    template: "markdown",
+  },
+};
+
+const BOILERPLATE_TEMPLATES = {
+  javascript: (name) => `// ${name}
+export default function ${toPascalCase(name)}() {
+  // Implementation here
+  return null;
+}`,
+
+  "react-js": (name) => `import React from 'react';
+
+const ${toPascalCase(name)} = () => {
+  return (
+    <div className="${toKebabCase(name)}">
+      <h1>${toPascalCase(name)} Component</h1>
+      {/* Component content */}
+    </div>
+  );
+};
+
+export default ${toPascalCase(name)};`,
+
+  typescript: (name) => `// ${name}
+export default function ${toPascalCase(name)}(): void {
+  // Implementation here
+}`,
+
+  "react-ts": (name) => `import React from 'react';
+
+interface ${toPascalCase(name)}Props {
+  // Define props here
+}
+
+const ${toPascalCase(name)}: React.FC<${toPascalCase(name)}Props> = () => {
+  return (
+    <div className="${toKebabCase(name)}">
+      <h1>${toPascalCase(name)} Component</h1>
+      {/* Component content */}
+    </div>
+  );
+};
+
+export default ${toPascalCase(name)};`,
+
+  python: (name) => `"""${name} module"""
+
+def main():
+    """Main function"""
+    pass
+
+if __name__ == "__main__":
+    main()`,
+
+  html: (name) => `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${toPascalCase(name)}</title>
+</head>
+<body>
+    <h1>${toPascalCase(name)}</h1>
+</body>
+</html>`,
+
+  css: (name) => `/* ${name} styles */
+.${toKebabCase(name)} {
+  /* Add your styles here */
+}`,
+
+  json: () => `{
+  "name": "example",
+  "version": "1.0.0"
+}`,
+
+  markdown: (name) => `# ${toPascalCase(name)}
+
+Description of ${name}.
+
+## Usage
+
+\`\`\`
+// Example usage
+\`\`\``,
+};
+
+// Utility functions
+const toPascalCase = (str) => {
+  return str
+    .split(/[-_.]/)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+    .join("");
+};
+
+const toKebabCase = (str) => {
+  return str
+    .replace(/([a-z])([A-Z])/g, "$1-$2")
+    .toLowerCase()
+    .replace(/[^a-z0-9-]/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
 };
 
 const generateBoilerplate = (name, fileType) => {
-  // Extract the base name without extension
   const baseName = name.split(".")[0];
+  const template = FILE_TYPES[fileType]?.template || "javascript";
+  const generator = BOILERPLATE_TEMPLATES[template];
 
-  // Convert kebab-case (with dashes) to PascalCase
-  const componentName = baseName
-    .split("-")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join("");
-
-  switch (fileType) {
-    case "JS":
-    case "JSX":
-      return `import React from 'react';
-
-const ${componentName} = () => {
-  return (
-    <div>
-      <h1>${componentName} Component</h1>
-    </div>
-  );
+  return generator
+    ? generator(baseName)
+    : `// ${name}\n// TODO: Add implementation`;
 };
 
-export default ${componentName};`;
-    case "TS":
-    case "TSX":
-      return `import React from 'react';
-
-interface ${componentName}Props {}
-
-const ${componentName}: React.FC<${componentName}Props> = () => {
-  return (
-    <div>
-      <h1>${componentName} Component</h1>
-    </div>
-  );
-};
-
-export default ${componentName};`;
-    default:
-      return "";
-  }
-};
+const STORAGE_KEY = "fileStructureGenerator";
 
 export default function FileStructureGenerator() {
   const [input, setInput] = useState("");
-  const [defaultFileType, setDefaultFileType] = useState("JS");
+  const [defaultFileType, setDefaultFileType] = useState("TSX");
   const [structure, setStructure] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generationProgress, setGenerationProgress] = useState(0);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [savedProjects, setSavedProjects] = useState([]);
+  const [errors, setErrors] = useState([]);
+  const [activeTab, setActiveTab] = useState("input");
 
+  // Load saved data on mount
   useEffect(() => {
-    const savedStructure = localStorage.getItem("fileStructure");
-    if (savedStructure) {
-      setInput(savedStructure);
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const data = JSON.parse(saved);
+        setInput(data.input || "");
+        setDefaultFileType(data.defaultFileType || "TSX");
+        setSavedProjects(data.projects || []);
+      }
+    } catch (error) {
+      console.error("Failed to load saved data:", error);
+      toast.error("Failed to load saved data");
     }
   }, []);
 
-  const generateStructure = async () => {
-    "use client";
-    setIsGenerating(true);
-    const lines = input.split("\n").filter((line) => line.trim() !== "");
-    const root = { name: "root", children: [], type: "folder" };
-    const stack = [root];
+  // Auto-save to localStorage
+  useEffect(() => {
+    const saveData = {
+      input,
+      defaultFileType,
+      projects: savedProjects,
+      lastModified: Date.now(),
+    };
 
-    // Delay of 2 seconds
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(saveData));
+    } catch (error) {
+      console.error("Failed to save data:", error);
+    }
+  }, [input, defaultFileType, savedProjects]);
 
-    lines.forEach((line) => {
+  // Validate input
+  const validateInput = useCallback((inputText) => {
+    const errors = [];
+    const lines = inputText.split("\n").filter((line) => line.trim());
+
+    if (lines.length === 0) {
+      errors.push("Input cannot be empty");
+      return errors;
+    }
+
+    let previousLevel = -1;
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
       const level = line.search(/\S/);
-      let name = line.trim();
-      let type = "folder";
-      let fileType = defaultFileType;
+      const trimmed = line.trim();
 
-      if (name.endsWith("/")) {
-        name = name.slice(0, -1);
-      } else if (name.includes(".")) {
-        type = "file";
-        const extension = name.split(".").pop().toLowerCase();
-        switch (extension) {
-          case "js":
-            fileType = "JS";
-            break;
-          case "jsx":
-            fileType = "JSX";
-            break;
-          case "ts":
-            fileType = "TS";
-            break;
-          case "tsx":
-            fileType = "TSX";
-            break;
-          default:
-            fileType = defaultFileType;
+      if (level > previousLevel + 2) {
+        errors.push(`Line ${i + 1}: Indentation too deep (${level} spaces)`);
+      }
+
+      if (trimmed.includes("..")) {
+        errors.push(`Line ${i + 1}: Invalid characters in name`);
+      }
+
+      previousLevel = Math.max(previousLevel, level);
+    }
+
+    return errors;
+  }, []);
+
+  // Generate structure with progress tracking
+  const generateStructure = useCallback(async () => {
+    setIsGenerating(true);
+    setGenerationProgress(0);
+    setErrors([]);
+
+    try {
+      // Validate input
+      const validationErrors = validateInput(input);
+      if (validationErrors.length > 0) {
+        setErrors(validationErrors);
+        setIsGenerating(false);
+        return;
+      }
+
+      const lines = input.split("\n").filter((line) => line.trim() !== "");
+      const root = { name: "root", children: [], type: "folder" };
+      const stack = [root];
+
+      // Simulate progress
+      for (let i = 0; i <= 100; i += 10) {
+        setGenerationProgress(i);
+        await new Promise((resolve) => setTimeout(resolve, 50));
+      }
+
+      lines.forEach((line, index) => {
+        const level = line.search(/\S/);
+        let name = line.trim();
+        let type = "folder";
+        let fileType = defaultFileType;
+
+        if (name.endsWith("/")) {
+          name = name.slice(0, -1);
+          type = "folder";
+        } else if (name.includes(".")) {
+          type = "file";
+          const extension = name.split(".").pop()?.toLowerCase();
+
+          // Auto-detect file type from extension
+          const detectedType = Object.entries(FILE_TYPES).find(
+            ([, config]) => config.extension === `.${extension}`
+          );
+
+          if (detectedType) {
+            fileType = detectedType[0];
+          }
+        } else {
+          type = "file";
+          name = `${name}${FILE_TYPES[defaultFileType]?.extension || ".txt"}`;
         }
-      } else {
-        type = "file";
-        name = `${name}${FileTypes[defaultFileType]}`;
-      }
 
-      const node = { name, children: [], type, fileType };
+        const content =
+          type === "file" ? generateBoilerplate(name, fileType) : undefined;
+        const size = content ? new Blob([content]).size : undefined;
 
-      while (level < stack.length - 1) {
-        stack.pop();
-      }
+        const node = {
+          name,
+          children: type === "folder" ? [] : undefined,
+          type,
+          fileType,
+          content,
+          size,
+        };
 
-      stack[stack.length - 1].children.push(node);
-      if (node.type === "folder") {
-        stack.push(node);
-      }
-    });
+        // Adjust stack based on indentation level
+        while (level < stack.length - 1) {
+          stack.pop();
+        }
 
-    setStructure(root);
-    setIsGenerating(false);
-    toast.success("File structure generated successfully!");
-  };
+        stack[stack.length - 1].children?.push(node);
 
-  const generateZip = async () => {
-    const zip = new JSZip();
+        if (node.type === "folder") {
+          stack.push(node);
+        }
+      });
 
-    const addToZip = (node, currentPath) => {
-      if (node.type === "folder") {
-        const folderPath = currentPath
-          ? `${currentPath}/${node.name}`
-          : node.name;
-        node.children.forEach((child) => addToZip(child, folderPath));
-      } else {
-        const filePath = currentPath
-          ? `${currentPath}/${node.name}`
-          : node.name;
-        const fileContent = generateBoilerplate(node.name, node.fileType);
-        zip.file(filePath, fileContent);
+      setStructure(root);
+      setActiveTab("preview");
+      toast.success("File structure generated successfully!");
+    } catch (error) {
+      console.error("Generation failed:", error);
+      toast.error("Failed to generate structure");
+      setErrors(["An unexpected error occurred during generation"]);
+    } finally {
+      setIsGenerating(false);
+      setGenerationProgress(0);
+    }
+  }, [input, defaultFileType, validateInput, setStructure]);
+
+  // Generate and download ZIP
+  const generateZip = useCallback(async () => {
+    if (!structure) return;
+
+    try {
+      const zip = new JSZip();
+      let fileCount = 0;
+
+      const addToZip = (node, currentPath = "") => {
+        if (node.type === "folder" && node.children) {
+          const folderPath = currentPath
+            ? `${currentPath}/${node.name}`
+            : node.name;
+
+          // Create empty folder if it has no children
+          if (node.children.length === 0) {
+            zip.folder(folderPath);
+          }
+
+          node.children.forEach((child) => addToZip(child, folderPath));
+        } else if (node.type === "file") {
+          const filePath = currentPath
+            ? `${currentPath}/${node.name}`
+            : node.name;
+          const content =
+            node.content ||
+            generateBoilerplate(node.name, node.fileType || defaultFileType);
+          zip.file(filePath, content);
+          fileCount++;
+        }
+      };
+
+      addToZip(structure);
+
+      toast.promise(
+        zip.generateAsync({ type: "blob" }).then((content) => {
+          FileSaver.saveAs(content, "file-structure.zip");
+          return fileCount;
+        }),
+        {
+          loading: "Generating ZIP file...",
+          success: (count) => `ZIP file downloaded with ${count} files!`,
+          error: "Failed to generate ZIP file",
+        }
+      );
+    } catch (error) {
+      console.error("ZIP generation failed:", error);
+      toast.error("Failed to generate ZIP file");
+    }
+  }, [structure, defaultFileType]);
+
+  // Save current project
+  const saveProject = useCallback(() => {
+    const project = {
+      id: Date.now().toString(),
+      name: `Project ${savedProjects.length + 1}`,
+      input,
+      defaultFileType,
+      timestamp: Date.now(),
+    };
+
+    setSavedProjects((prev) => [project, ...prev.slice(0, 9)]); // Keep last 10 projects
+    toast.success("Project saved!");
+  }, [input, defaultFileType, savedProjects.length]);
+
+  // Load saved project
+  const loadProject = useCallback(
+    (project) => {
+      setInput(project.input);
+      setDefaultFileType(project.defaultFileType);
+      setStructure(null);
+      toast.success(`Loaded ${project.name}`);
+    },
+    [setStructure]
+  );
+
+  // Delete saved project
+  const deleteProject = useCallback((projectId) => {
+    setSavedProjects((prev) => prev.filter((p) => p.id !== projectId));
+    toast.success("Project deleted");
+  }, []);
+
+  // Copy example to clipboard
+  const copyExample = useCallback(async () => {
+    const example = `src/
+  components/
+    ui/
+      Button
+      Input
+      Card
+    layout/
+      Header
+      Footer
+      Sidebar
+  pages/
+    Home
+    About
+    Contact
+  hooks/
+    useAuth
+    useApi
+  utils/
+    helpers
+    constants
+  styles/
+    globals.css
+    components.css
+public/
+  images/
+  icons/
+  favicon.ico
+package.json
+README.md
+tsconfig.json`;
+
+    try {
+      await navigator.clipboard.writeText(example);
+      toast.success("Example copied to clipboard!");
+      setDialogOpen(false);
+    } catch (error) {
+      console.error("Failed to copy:", error);
+      toast.error("Failed to copy example");
+    }
+  }, []);
+
+  // Statistics
+  const stats = useMemo(() => {
+    if (!structure) return null;
+
+    let fileCount = 0;
+    let folderCount = 0;
+    let totalSize = 0;
+
+    const traverse = (node) => {
+      if (node.type === "file") {
+        fileCount++;
+        totalSize += node.size || 0;
+      } else if (node.type === "folder") {
+        folderCount++;
+        node.children?.forEach(traverse);
       }
     };
 
-    addToZip(structure, "");
+    structure.children?.forEach(traverse);
 
-    const content = await zip.generateAsync({ type: "blob" });
-    FileSaver.saveAs(content, "file-structure.zip");
-    toast.success("ZIP file downloaded successfully!");
-  };
-
-  const copyToClipboard = async () => {
-    const exampleText = `src/
-  pages/
-    index
-    about
-  components/
-    Header
-    Footer
-  api/
-    users`;
-
-    try {
-      await navigator.clipboard.writeText(exampleText);
-      toast.success("Example copied to clipboard");
-      setDialogOpen(false);
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-      toast.error("Failed to copy example to clipboard");
-    }
-  };
+    return { fileCount, folderCount, totalSize };
+  }, [structure]);
 
   return (
     <>
@@ -201,101 +522,230 @@ export default function FileStructureGenerator() {
           patternAlpha={20}
         />
       </div>
-      <div className=" mx-auto py-8 w-full min-h-screen">
-        <div className="mx-auto max-w-4xl relative overflow-hidden">
-          {/* <div className="absolute right-0 top-0 h-8 w-8  md:h-16 md:w-16">
-            <div className="absolute transform rotate-45 bg-gradient-to-bl from-pink-400 to-violet-500 text-center text-white font-semibold py-1 right-[-35px] top-[32px] w-[170px]">
-              New CLI Tool
-            </div>
-          </div> */}
 
-          <Card className=" max-w-4xl mx-auto">
+      <div className="mx-auto py-8 w-full min-h-screen relative z-10">
+        <div className="mx-auto max-w-6xl px-4">
+          <Card className="max-w-6xl mx-auto">
             <CardHeader className="relative">
-              <CardTitle className="text-3xl font-bold text-center">
-                File Structure Generator
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6 relative">
-              <InputSection
-                input={input}
-                setInput={setInput}
-                defaultFileType={defaultFileType}
-                setDefaultFileType={setDefaultFileType}
-                onGenerate={generateStructure}
-                isGenerating={isGenerating}
-              />
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-3xl font-bold">
+                    File Structure Generator
+                  </CardTitle>
+                  <p className="text-muted-foreground mt-2">
+                    Create, preview, and download your project structure
+                  </p>
+                </div>
 
-              <div className="flex justify-center space-x-4">
-                <Button
-                  id="generate-btn"
-                  onClick={generateStructure}
-                  disabled={isGenerating}
-                >
-                  Generate Structure
-                </Button>
-                {structure && (
-                  <Button
-                    id="download-btn"
-                    variant="outline"
-                    onClick={generateZip}
-                  >
-                    <Download className="mr-2 h-4 w-4" />
-                    Download ZIP
-                  </Button>
-                )}
+                <div className="flex items-center gap-2">
+                  {stats && (
+                    <div className="flex gap-2">
+                      <Badge variant="outline">
+                        <Folder className="h-3 w-3 mr-1" />
+                        {stats.folderCount}
+                      </Badge>
+                      <Badge variant="outline">
+                        <FileText className="h-3 w-3 mr-1" />
+                        {stats.fileCount}
+                      </Badge>
+                      <Badge variant="outline">
+                        {(stats.totalSize / 1024).toFixed(1)} KB
+                      </Badge>
+                    </div>
+                  )}
+
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        onClick={saveProject}
+                        disabled={!input.trim()}
+                      >
+                        <Save className="h-4 w-4 mr-2" />
+                        Save Project
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      {savedProjects.length > 0 && (
+                        <>
+                          {savedProjects.slice(0, 5).map((project) => (
+                            <DropdownMenuItem
+                              key={project.id}
+                              className="flex items-center justify-between"
+                            >
+                              <span
+                                onClick={() => loadProject(project)}
+                                className="flex-1 cursor-pointer"
+                              >
+                                {project.name}
+                              </span>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  deleteProject(project.id);
+                                }}
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            </DropdownMenuItem>
+                          ))}
+                          <DropdownMenuSeparator />
+                        </>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </div>
+            </CardHeader>
 
-              {structure && <FileTreeViewer structure={structure} />}
+            <CardContent className="space-y-6">
+              {errors.length > 0 && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Validation Errors</AlertTitle>
+                  <AlertDescription>
+                    <ul className="list-disc list-inside space-y-1">
+                      {errors.map((error, index) => (
+                        <li key={index}>{error}</li>
+                      ))}
+                    </ul>
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {isGenerating && (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span>Generating structure...</span>
+                    <span>{generationProgress}%</span>
+                  </div>
+                  <Progress value={generationProgress} className="w-full" />
+                </div>
+              )}
+
+              <Tabs value={activeTab} onValueChange={setActiveTab}>
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="input">Input & Settings</TabsTrigger>
+                  <TabsTrigger value="preview" disabled={!structure}>
+                    Preview & Export
+                  </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="input" className="space-y-6">
+                  <InputSection
+                    input={input}
+                    setInput={setInput}
+                    defaultFileType={defaultFileType}
+                    setDefaultFileType={setDefaultFileType}
+                    onGenerate={generateStructure}
+                    isGenerating={isGenerating}
+                  />
+
+                  <div className="flex justify-center gap-4">
+                    <Button
+                      onClick={generateStructure}
+                      disabled={isGenerating || !input.trim()}
+                      size="lg"
+                    >
+                      Generate Structure
+                    </Button>
+
+                    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="lg">
+                          <Copy className="mr-2 h-4 w-4" />
+                          View Example
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-2xl">
+                        <DialogHeader>
+                          <DialogTitle>Example Structure</DialogTitle>
+                          <DialogDescription>
+                            Here&apos;s an example of a typical React project
+                            structure
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="relative">
+                          <pre className="p-4 bg-muted rounded-lg overflow-x-auto text-sm">
+                            <code>{`src/
+  components/
+    ui/
+      Button
+      Input
+      Card
+    layout/
+      Header
+      Footer
+      Sidebar
+  pages/
+    Home
+    About
+    Contact
+  hooks/
+    useAuth
+    useApi
+  utils/
+    helpers
+    constants
+  styles/
+    globals.css
+    components.css
+public/
+  images/
+  icons/
+  favicon.ico
+package.json
+README.md
+tsconfig.json`}</code>
+                          </pre>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="absolute top-2 right-2"
+                            onClick={copyExample}
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="preview" className="space-y-6">
+                  {structure && (
+                    <>
+                      <div className="flex justify-center gap-4">
+                        <Button onClick={generateZip} variant="default">
+                          <Download className="mr-2 h-4 w-4" />
+                          Download ZIP
+                        </Button>
+                        <Button
+                          onClick={() => setActiveTab("input")}
+                          variant="outline"
+                        >
+                          Edit Structure
+                        </Button>
+                      </div>
+
+                      <FileTreeViewer
+                        structure={structure}
+                        searchable={true}
+                        showFileSize={true}
+                        maxHeight={600}
+                      />
+                    </>
+                  )}
+                </TabsContent>
+              </Tabs>
             </CardContent>
           </Card>
-          <Dialog
-            open={dialogOpen}
-            onOpenChange={setDialogOpen}
-            className="absolute z-50"
-          >
-            <DialogTrigger asChild>
-              <Button variant="outline" className="mt-4 cursor-pointer">
-                <Copy className="mr-2 h-4 w-4" />
-                Copy Example
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Example Structure</DialogTitle>
-                <DialogDescription>
-                  <p className="mb-6">
-                    Copy the example below to your clipboard and paste it into
-                    the input field.
-                  </p>
-                  <div className="relative">
-                    <pre className="p-4 bg-muted rounded-lg overflow-x-auto">
-                      <code className="text-sm font-mono">
-                        src/ <br />
-                        {"  "}pages/ <br />
-                        {"    "}index <br />
-                        {"    "}about <br />
-                        {"  "}components/ <br />
-                        {"    "}Header <br />
-                        {"    "}Footer <br />
-                        {"  "}api/ <br />
-                        {"    "}users
-                      </code>
-                    </pre>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="absolute top-2 right-2"
-                      onClick={copyToClipboard}
-                    >
-                      <Copy className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </DialogDescription>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
         </div>
-        <ChatAssistant />
       </div>
     </>
   );

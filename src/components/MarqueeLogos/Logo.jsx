@@ -56,7 +56,7 @@ const ReviewCard = ({ img, name, isHovered }) => {
           "bg-background/80 backdrop-blur-sm transition-all duration-300 ease-in-out",
           isHovered
             ? "bg-background/90 border-primary/20"
-            : "border border-primary/10"
+            : "border-2 border-primary/10"
         )}
       >
         <div>

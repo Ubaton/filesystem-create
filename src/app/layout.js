@@ -35,7 +35,7 @@ export default function RootLayout({ children }) {
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Navigation />
-          <main>{children}</main>
+          <main className="min-h-svh">{children}</main>
           <Footer />
           <ScrollToTop />
           <Toaster position="top-center" />

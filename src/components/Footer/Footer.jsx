@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import FileGen from "../../public/assets/GrayFIleGen.png";
+import { cn } from "@/lib/utils";
 
 const imageAsset = {
   name: "File Structure Generator",
@@ -18,30 +19,31 @@ export default function Footer() {
   }, []);
 
   return (
-    <footer className="border-t">
+    <footer className="border-t border-border/40 bg-background">
       <div className="container mx-auto px-4 py-6">
         <div className="flex items-center justify-between">
-          <p className="md:text-xs text-[9px] text-muted-foreground">
+          {/* Copyright Section */}
+          <div className="text-sm text-muted-foreground">
             &copy; 2024 - {currentYear} Raymond Ngobeni. All rights reserved.
-          </p>
+          </div>
 
-          <Link href={"/"}>
-            <div className="flex items-center space-x-1">
+          {/* Logo Section */}
+          <Link
+            href="/"
+            className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+          >
+            <div className="p-1.5 rounded-lg bg-muted/50">
               <Image
                 src={imageAsset.image}
                 alt={imageAsset.name}
-                width={40}
-                height={40}
+                width={24}
+                height={24}
                 priority={true}
               />
-
-              <h1 className="text-lg font-semibold">
-                File
-                <span className="bg-gradient-to-bl from-pink-400 to-violet-500 bg-clip-text text-transparent">
-                  Gen
-                </span>
-              </h1>
             </div>
+            <span className="text-base font-medium text-foreground">
+              FileGen
+            </span>
           </Link>
         </div>
       </div>
