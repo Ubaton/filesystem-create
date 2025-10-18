@@ -19,6 +19,7 @@ import Bun from "../public/assets/bun.svg";
 import Npm from "../public/assets/npm.svg";
 
 import Image from "next/image";
+import { trackEvent } from "@/lib/analytics";
 const packageManagers = [
   {
     icon: Npm,
@@ -50,6 +51,7 @@ export function InstallationSection() {
     navigator.clipboard.writeText(command).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+  try { trackEvent('copy_install_command', { command: command.slice(0,40) }); } catch(e){}
     });
   };
 

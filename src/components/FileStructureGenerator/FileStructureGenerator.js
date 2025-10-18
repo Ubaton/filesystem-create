@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
+import { trackEvent } from "@/lib/analytics";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -352,7 +353,8 @@ export default function FileStructureGenerator() {
 
       setStructure(root);
       setActiveTab("preview");
-      toast.success("File structure generated successfully!");
+  toast.success("File structure generated successfully!");
+  try { trackEvent('generate_structure', { project: input?.slice(0,50) }); } catch(e){}
     } catch (error) {
       console.error("Generation failed:", error);
       toast.error("Failed to generate structure");
@@ -404,7 +406,7 @@ export default function FileStructureGenerator() {
         }),
         {
           loading: "Generating ZIP file...",
-          success: (count) => `ZIP file downloaded with ${count} files!`,
+          success: (count) => { trackEvent('download_zip', { files: count }); return `ZIP file downloaded with ${count} files!` },
           error: "Failed to generate ZIP file",
         }
       );
@@ -426,6 +428,7 @@ export default function FileStructureGenerator() {
 
     setSavedProjects((prev) => [project, ...prev.slice(0, 9)]); // Keep last 10 projects
     toast.success("Project saved!");
+    try { trackEvent('save_project', { name: project.name }); } catch(e){}
   }, [input, defaultFileType, savedProjects.length]);
 
   // Load saved project
@@ -481,6 +484,7 @@ tsconfig.json`;
     try {
       await navigator.clipboard.writeText(example);
       toast.success("Example copied to clipboard!");
+  try { trackEvent('copy_example'); } catch(e){}
       setDialogOpen(false);
     } catch (error) {
       console.error("Failed to copy:", error);

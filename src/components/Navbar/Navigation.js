@@ -20,6 +20,7 @@ import { FileText } from "@mynaui/icons-react";
 import NPMLogo from "../../public/assets/npm.svg";
 import { useRouter } from "next/navigation";
 import ThemeToggle from "../ui/theme-toggle";
+import { trackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 
 const imageAsset = {
@@ -111,6 +112,7 @@ const Navigation = () => {
   }, []);
 
   const handleLinkToNPM = () => {
+    try { trackEvent('open_npm'); } catch(e){}
     router.push("https://www.npmjs.com/package/@ubaton/filegen");
   };
 

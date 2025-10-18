@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import FileGen from "../../public/assets/GrayFIleGen.png";
 import { cn } from "@/lib/utils";
+import { trackEvent } from "@/lib/analytics";
 
 const imageAsset = {
   name: "File Structure Generator",
@@ -31,6 +32,7 @@ export default function Footer() {
           <Link
             href="/"
             className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+            onClick={() => { try { trackEvent('footer_home_click'); } catch(e){} }}
           >
             <div className="p-1.5 rounded-lg bg-muted/50">
               <Image

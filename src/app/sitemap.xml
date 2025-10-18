@@ -1,4 +1,4 @@
-const baseUrl = "https://filegen.vercel.app/";
+const baseUrl = "https://filegen.vercel.app";
 
 export default async function sitemap() {
   // Get a consistent timestamp for all routes
@@ -6,12 +6,12 @@ export default async function sitemap() {
 
   // Define routes with explicit priorities
   const routeConfigs = [
-    { route: "https://filegen.vercel.app", priority: 1.0 },
-    { route: "https://filegen.vercel.app/docs", priority: 0.8 },
-    { route: "https://filegen.vercel.app/generate-file", priority: 0.8 },
-    { route: "https://filegen.vercel.app/project-file", priority: 0.8 },
-    { route: "https://filegen.vercel.app/learn-more", priority: 0.8 },
-    { route: "https://filegen.vercel.app/docs/license", priority: 0.8 },
+    { route: "", priority: 1.0 },
+    { route: "/docs", priority: 0.9 },
+    { route: "/generate-file", priority: 0.9 },
+    { route: "/project-file", priority: 0.8 },
+    { route: "/learn-more", priority: 0.7 },
+    { route: "/docs/license", priority: 0.6 },
   ];
 
   // Map each route to its sitemap object

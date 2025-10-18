@@ -17,6 +17,7 @@ import { Badge } from "../ui/badge";
 import Logo from "../../public/assets/GrayFIleGen.png";
 import { Avatar } from "@/components/ui/avatar";
 import Image from "next/image";
+import { trackEvent } from "@/lib/analytics";
 
 const MessageContent = ({ message, onCopy }) => {
   if (message.isUser) {
@@ -126,7 +127,10 @@ export default function ChatAssistant() {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const toggleChat = () => setIsExpanded((prev) => !prev);
+  const toggleChat = () => {
+    try { trackEvent(isExpanded ? 'chat_close' : 'chat_open'); } catch(e){}
+    setIsExpanded((prev) => !prev);
+  };
 
   const handleCopy = async (text, type) => {
     try {
@@ -138,6 +142,7 @@ export default function ChatAssistant() {
       }
       
       await navigator.clipboard.writeText(contentToCopy);
+      try { trackEvent('chat_copy', { type }); } catch(e){}
       toast.success(`Copied ${type} to clipboard!`, {
         position: "bottom-right",
       });
@@ -160,6 +165,7 @@ export default function ChatAssistant() {
 
     const newMessage = { content: userInput, isUser: true };
     setMessages((prev) => [...prev, newMessage]);
+    try { trackEvent('chat_send_message', { query: userInput.slice(0,30) }); } catch(e){}
     setUserInput("");
     setIsLoading(true);
 

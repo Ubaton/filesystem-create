@@ -1,22 +1,20 @@
-const baseUrl = "https://filegen.vercel.app/";
+const baseUrl = "https://filegen.vercel.app";
 
 export const metadataFilegen = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: "Filegen - File Structure Generator",
+    default: "Filegen — File Structure Generator",
     template: "%s | Filegen",
   },
   description:
-    "Filegen is a file structure generator that allows users to create and visualize file structures, and generate downloadable ZIP files based on the input.",
+    "Filegen helps you create, preview, and download file structures for web projects. Fast, simple, and ideal for bootstrapping new projects.",
   keywords: [
-    "filegen",
-    "project",
-    "SEO",
     "file structure generator",
-    "file structure",
-    "filegen project",
-    "filegen SEO",
-    "file",
+    "filegen",
+    "project scaffolding",
+    "nextjs",
+    "generator",
+    "template",
   ],
   authors: [{ name: "Raymond Ngobeni" }],
   creator: "Raymond Ngobeni",
@@ -28,25 +26,27 @@ export const metadataFilegen = {
   },
   openGraph: {
     type: "website",
-    locale: "en_ZA",
+    locale: "en_US",
     url: baseUrl,
     siteName: "Filegen",
-    title: "Filegen - File Structure Generator",
-    description: "Filegen is a file structure generator that allows users to create and visualize file structures, and generate downloadable ZIP files based on the input.",
+    title: "Filegen — File Structure Generator",
+    description:
+      "Create and download complete file structures for your projects. Filegen visualizes folder trees and exports ZIPs ready to use.",
     images: [
       {
-        url: "/public/assets/GrayFIleGen.png",
+        url: "/assets/GrayFIleGen.png",
         width: 1200,
         height: 630,
-        alt: "Filegen",
+        alt: "Filegen preview",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Filegen - File Structure Generator",
-    description: "Filegen is a file structure generator that allows users to create and visualize file structures, and generate downloadable ZIP files based on the input.",
-    images: ["/public/assets/GrayFIleGen.png"],
+    title: "Filegen — File Structure Generator",
+    description:
+      "Create and download complete file structures for your projects. Filegen visualizes folder trees and exports ZIPs ready to use.",
+    images: ["/assets/GrayFIleGen.png"],
   },
   robots: {
     index: true,
@@ -60,11 +60,12 @@ export const metadataFilegen = {
     },
   },
   verification: {
-    google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION,
+    google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION || undefined,
   },
   alternates: {
     canonical: baseUrl,
   },
+  manifest: `${baseUrl}/site.webmanifest`,
 };
 
 export default metadataFilegen;

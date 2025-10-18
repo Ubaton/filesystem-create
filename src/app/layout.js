@@ -8,6 +8,7 @@ import ScrollToTop from "../components/ui/sroll-to-top";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import { metadataFilegen } from "./metadata";
+import AnalyticsLoader from "@/lib/analytics";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -30,6 +31,32 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head>
+        {/* Google Site Verification */}
+        {process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION && (
+          <meta name="google-site-verification" content={process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION} />
+        )}
+        
+        {/* Performance hints */}
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        
+        {/* Canonical link for crawlers */}
+        <link rel="canonical" href={metadataFilegen.alternates?.canonical || "https://filegen.vercel.app"} />
+        
+        {/* Basic structured data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: metadataFilegen.title?.default || "Filegen",
+              url: metadataFilegen.alternates?.canonical || "https://filegen.vercel.app",
+              description: metadataFilegen.description,
+            }),
+          }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
@@ -42,6 +69,7 @@ export default function RootLayout({ children }) {
         </ThemeProvider>
         <SpeedInsights />
         <Analytics />
+        <AnalyticsLoader />
       </body>
     </html>
   );
