@@ -201,6 +201,13 @@ const generateBoilerplate = (name, fileType) => {
 };
 
 const STORAGE_KEY = "fileStructureGenerator";
+const INDENT_SIZE = 2;
+
+const getIndentLevel = (line) => {
+  const leadingWhitespace = line.match(/^\s*/)?.[0] || "";
+  const normalizedWhitespace = leadingWhitespace.replace(/\t/g, " ".repeat(INDENT_SIZE));
+  return normalizedWhitespace.length;
+};
 
 export default function FileStructureGenerator() {
   const [input, setInput] = useState("");
@@ -258,18 +265,23 @@ export default function FileStructureGenerator() {
     let previousLevel = -1;
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      const level = line.search(/\S/);
+      const level = getIndentLevel(line);
       const trimmed = line.trim();
 
-      if (level > previousLevel + 2) {
+      if (level % INDENT_SIZE !== 0) {
+        errors.push(
+          `Line ${i + 1}: Indentation must use multiples of ${INDENT_SIZE} spaces`
+        );
+      }
+
+      if (level > previousLevel + INDENT_SIZE) {
         errors.push(`Line ${i + 1}: Indentation too deep (${level} spaces)`);
       }
 
       if (trimmed.includes("..")) {
         errors.push(`Line ${i + 1}: Invalid characters in name`);
       }
-
-      previousLevel = Math.max(previousLevel, level);
+      previousLevel = level;
     }
 
     return errors;
@@ -301,7 +313,7 @@ export default function FileStructureGenerator() {
       }
 
       lines.forEach((line, index) => {
-        const level = line.search(/\S/);
+        const level = getIndentLevel(line) / INDENT_SIZE;
         let name = line.trim();
         let type = "folder";
         let fileType = defaultFileType;
