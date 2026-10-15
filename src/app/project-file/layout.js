@@ -1,7 +1,7 @@
 import { metadataFilegen } from "../metadata";
 
 export const metadata = {
-  title: "Project Templates — Filegen",
+  title: "Project Templates | Filegen",
   description: "Browse and select from ready-made project templates including React, Next.js, Node.js, and more to kickstart your development.",
   openGraph: {
     title: "Filegen Project Templates",

@@ -143,7 +143,7 @@
 }
 
 @layer utilities {
-  /* Entrance animations — pure CSS so content paints immediately and
+  /* Entrance animations: pure CSS so content paints immediately and
      animates in without JS timers blocking visibility */
   @keyframes fade-up {
     from {

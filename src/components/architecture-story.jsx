@@ -172,7 +172,7 @@ export default function ArchitectureStory() {
               <div className="blueprint-layer-labels">
                 {chapters.map((c) => (
                   <span key={c.id}>
-                    {c.number} — {c.layer}
+                    {c.number} / {c.layer}
                   </span>
                 ))}
               </div>

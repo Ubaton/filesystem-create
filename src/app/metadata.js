@@ -3,7 +3,7 @@ const baseUrl = "https://filegen.vercel.app";
 export const metadataFilegen = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: "Filegen — File Structure Generator",
+    default: "Filegen | File Structure Generator",
     template: "%s | Filegen",
   },
   description:
@@ -29,7 +29,7 @@ export const metadataFilegen = {
     locale: "en_US",
     url: baseUrl,
     siteName: "Filegen",
-    title: "Filegen — File Structure Generator",
+    title: "Filegen | File Structure Generator",
     description:
       "Create and download complete file structures for your projects. Filegen visualizes folder trees and exports ZIPs ready to use.",
     images: [
@@ -43,7 +43,7 @@ export const metadataFilegen = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Filegen — File Structure Generator",
+    title: "Filegen | File Structure Generator",
     description:
       "Create and download complete file structures for your projects. Filegen visualizes folder trees and exports ZIPs ready to use.",
     images: ["/assets/GrayFIleGen.png"],

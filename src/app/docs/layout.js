@@ -1,6 +1,6 @@
 import { metadataFilegen } from "../metadata";
 export const metadata = {
-  title: "Documentation — FileGen",
+  title: "Documentation | FileGen",
   description:
     "Learn the FileGen workspace, outline syntax, templates, and CLI.",
   alternates: { canonical: `${metadataFilegen.metadataBase}/docs` },

@@ -91,7 +91,7 @@ export default function NotFound() {
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Oops! The page you&apos;re looking for seems to have wandered off into the digital void. 
-              But don&apos;t worry — let&apos;s get you back to creating amazing file structures!
+              But don&apos;t worry, let&apos;s get you back to creating amazing file structures!
             </p>
           </div>
         </motion.div>

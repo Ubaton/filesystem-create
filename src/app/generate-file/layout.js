@@ -1,7 +1,7 @@
 import { metadataFilegen } from "../metadata";
 
 export const metadata = {
-  title: "Generate File Structure — Filegen",
+  title: "Generate File Structure | Filegen",
   description: "Create and download complete file structures for your projects with our interactive generator. Supports multiple file types and templates.",
   openGraph: {
     title: "Filegen File Structure Generator",

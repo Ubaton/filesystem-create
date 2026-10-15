@@ -50,7 +50,7 @@ export default function FileType() {
           Project Structures
         </h1>
         <p className="text-muted-foreground max-w-xl mx-auto">
-          Ready-made structures for popular frameworks — copy one and start
+          Ready-made structures for popular frameworks. Copy one and start
           building.
         </p>
       </div>
