@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Check, Loader2, Search } from "lucide-react";
+import { Check, Search } from "lucide-react";
 import { Copy } from "@mynaui/icons-react";
 import { structures } from "@/templates/projectStructures";
 import StructureTree from "./StructureTree";
@@ -13,8 +13,13 @@ import { Separator } from "../ui/separator";
 import ProFileType from "./ProFileType";
 
 export default function FileType() {
-  const [copyingStructure, setCopyingStructure] = useState(null);
+  const [copiedStructure, setCopiedStructure] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const copiedTimerRef = useRef(null);
+
+  useEffect(() => {
+    return () => clearTimeout(copiedTimerRef.current);
+  }, []);
 
   const filteredStructures = useMemo(() => {
     return Object.entries(structures).filter(([key]) =>
@@ -22,50 +27,33 @@ export default function FileType() {
     );
   }, [searchTerm]);
 
-  const handleCopy = (key, structure) => {
-    setCopyingStructure(key);
-    setTimeout(() => {
-      navigator.clipboard
-        .writeText(structure)
-        .then(() => {
-          toast.custom(
-            (t) => (
-              <motion.div
-                key={`toast-${key}`}
-                initial={{ opacity: 0, y: 50, scale: 0.3 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
-                transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                className="bg-zinc-100 border px-4 text-black py-2 rounded-md shadow-sm flex items-center space-x-2"
-              >
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: "spring", stiffness: 500, delay: 0.2 }}
-                >
-                  <Check className="w-5 h-5" />
-                </motion.div>
-                <span>Copied {key} structure!</span>
-              </motion.div>
-            ),
-            { duration: 2000, position: "top-center" }
-          );
-        })
-        .catch((err) => {
-          console.error("Failed to copy: ", err);
-          toast.error(`Failed to copy ${key} structure`);
-        })
-        .finally(() => {
-          setCopyingStructure(null);
-        });
-    }, 1000);
+  const handleCopy = async (key, structure) => {
+    try {
+      await navigator.clipboard.writeText(structure);
+      setCopiedStructure(key);
+      clearTimeout(copiedTimerRef.current);
+      copiedTimerRef.current = setTimeout(() => setCopiedStructure(null), 1500);
+      toast.success(`Copied ${key} structure!`);
+    } catch (err) {
+      console.error("Failed to copy: ", err);
+      toast.error(`Failed to copy ${key} structure`);
+    }
   };
 
   return (
     <div className="p-4 md:p-8 min-h-screen bg-background container">
-      <h1 className="text-3xl font-bold mb-6 text-center">
-        Project Structures
-      </h1>
+      <div className="text-center mb-8">
+        <span className="inline-block mb-4 rounded-full border border-primary/30 bg-primary/10 px-4 py-1 text-xs font-semibold uppercase tracking-widest text-primary">
+          Templates
+        </span>
+        <h1 className="text-3xl md:text-4xl font-bold mb-3 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+          Project Structures
+        </h1>
+        <p className="text-muted-foreground max-w-xl mx-auto">
+          Ready-made structures for popular frameworks — copy one and start
+          building.
+        </p>
+      </div>
       <div className="mb-6 max-w-md mx-auto">
         <div className="relative">
           <Input
@@ -106,20 +94,19 @@ export default function FileType() {
                     variant="outline"
                     size="sm"
                     onClick={() => handleCopy(key, structure)}
-                    disabled={copyingStructure !== null}
                     aria-label={
-                      copyingStructure === key
-                        ? `Copying ${key} structure`
+                      copiedStructure === key
+                        ? `Copied ${key} structure`
                         : `Copy ${key} structure`
                     }
                   >
-                    {copyingStructure === key ? (
-                      <Loader2 className="animate-spin" size={20} />
+                    {copiedStructure === key ? (
+                      <Check className="text-green-500" size={20} />
                     ) : (
                       <Copy size={20} />
                     )}
                     <span className="sr-only">
-                      {copyingStructure === key ? "Copying" : "Copy"}
+                      {copiedStructure === key ? "Copied" : "Copy"}
                     </span>
                   </Button>
                 </div>

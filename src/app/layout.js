@@ -1,12 +1,13 @@
 import localFont from "next/font/local";
 import "./globals.css";
+import "./filegen.css";
 import { ThemeProvider } from "next-themes";
 import Navigation from "../components/Navbar/Navigation";
 import Footer from "../components/Footer/Footer";
 import { Toaster } from "sonner";
 import ScrollToTop from "../components/ui/sroll-to-top";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Analytics } from "@vercel/analytics/react";
+import { Analytics } from "@vercel/analytics/next";
 import { metadataFilegen } from "./metadata";
 import AnalyticsLoader from "@/lib/analytics";
 
@@ -30,7 +31,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         {/* Google Site Verification */}
         {process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION && (
@@ -62,7 +63,7 @@ export default function RootLayout({ children }) {
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Navigation />
-          <main className="min-h-svh">{children}</main>
+          <main id="main-content" className="min-h-svh">{children}</main>
           <Footer />
           <ScrollToTop />
           <Toaster position="top-center" />

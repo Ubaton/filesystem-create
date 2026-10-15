@@ -1,8 +1,23 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { structures } from "@/templates/projectStructures";
 import { proStructure } from "@/templates/proProjectStuctres";
-import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  query,
+  where,
+  getDocs,
+  limit,
+} from "firebase/firestore";
 import { db } from "@/lib/firebaseConfig";
+
+// Prefer a server-only key; NEXT_PUBLIC_ fallback kept for existing deployments
+const GEMINI_API_KEY =
+  process.env.CHAT_FILE_GENERATE ||
+  process.env.GEMINI_API_KEY ||
+  process.env.NEXT_PUBLIC_CHAT_FILE_GENERATE;
+
+const MAX_SIMILAR_STRUCTURES = 5;
 
 const getDependencies = (projectType) => {
   const commonDeps = {
@@ -68,7 +83,8 @@ const getSimilarStructures = async (projectType) => {
   try {
     const q = query(
       collection(db, "generatedStructures"),
-      where("projectType", "==", projectType)
+      where("projectType", "==", projectType),
+      limit(MAX_SIMILAR_STRUCTURES)
     );
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map((doc) => ({
@@ -152,9 +168,15 @@ export async function POST(req) {
       )
       .join("\n");
 
-    const genAI = new GoogleGenerativeAI(
-      process.env.NEXT_PUBLIC_CHAT_FILE_GENERATE
-    );
+    if (!GEMINI_API_KEY) {
+      console.error("Missing Gemini API key for structure generation");
+      return Response.json(
+        { error: "Structure generation is not configured" },
+        { status: 500 }
+      );
+    }
+
+    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
     // Create the prompt with both template and similar structures context
@@ -181,16 +203,7 @@ Follow these rules:
 
 Generate the structure now:`;
 
-    const chat = model.startChat({
-      history: [
-        {
-          role: "user",
-          parts: [{ text: prompt }],
-        },
-      ],
-    });
-
-    const result = await chat.sendMessage(projectType);
+    const result = await model.generateContent(prompt);
     let structure = result.response.text();
     structure = cleanStructure(structure);
 
@@ -211,8 +224,10 @@ Generate the structure now:`;
       ...dependencies,
     };
 
-    // Store the generated structure in Firebase
-    await storeGeneratedStructure(projectType, structure, packageJson);
+    // Store the generated structure in Firebase without blocking the response
+    storeGeneratedStructure(projectType, structure, packageJson).catch(
+      (error) => console.error("Error storing structure:", error)
+    );
 
     return Response.json({
       structure,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -8,20 +8,31 @@ import { Check } from "lucide-react";
 import { Copy } from "@mynaui/icons-react";
 import { proStructure } from "@/templates/proProjectStuctres";
 import StructureTree from "./StructureTree";
-import { getDocs, where, query, collection } from "firebase/firestore";
+import { getDocs, query, collection, limit } from "firebase/firestore";
 import { db } from "@/lib/firebaseConfig";
 
+// Cap how many community structures we pull from Firestore on page load
+const MAX_FETCHED_STRUCTURES = 24;
+
 const ProFileType = ({ searchTerm }) => {
-  const [copyingStructure, setCopyingStructure] = useState(null);
+  const [copiedStructure, setCopiedStructure] = useState(null);
   const [generativeStructure, setGenerativeStructure] = useState([]);
   const [displayedStructures, setDisplayedStructures] = useState([]);
   const [itemsPerPage] = useState(4);
   const [currentPage, setCurrentPage] = useState(1);
+  const copiedTimerRef = useRef(null);
+
+  useEffect(() => {
+    return () => clearTimeout(copiedTimerRef.current);
+  }, []);
 
   useEffect(() => {
     const fetchAllStructures = async () => {
       try {
-        const q = query(collection(db, "generatedStructures"));
+        const q = query(
+          collection(db, "generatedStructures"),
+          limit(MAX_FETCHED_STRUCTURES)
+        );
         const querySnapshot = await getDocs(q);
         const structures = querySnapshot.docs.map((doc) => {
           const data = doc.data();
@@ -65,43 +76,17 @@ const ProFileType = ({ searchTerm }) => {
     );
   }, [searchTerm]);
 
-  const handleCopy = (key, structure) => {
-    setCopyingStructure(key);
-
-    setTimeout(() => {
-      navigator.clipboard
-        .writeText(structure)
-        .then(() => {
-          toast.custom(
-            (t) => (
-              <motion.div
-                initial={{ opacity: 0, y: 50, scale: 0.3 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
-                transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                className="bg-zinc-100 border px-4 text-black py-2 rounded-md shadow-sm flex items-center space-x-2"
-              >
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: "spring", stiffness: 500, delay: 0.2 }}
-                >
-                  <Check className="w-5 h-5" />
-                </motion.div>
-                <span>Copied {key} pro structure!</span>
-              </motion.div>
-            ),
-            { duration: 2000, position: "top-center" }
-          );
-        })
-        .catch((err) => {
-          console.error("Failed to copy: ", err);
-          toast.error(`Failed to copy ${key} pro structure`);
-        })
-        .finally(() => {
-          setCopyingStructure(null);
-        });
-    }, 1000);
+  const handleCopy = async (key, structure) => {
+    try {
+      await navigator.clipboard.writeText(structure);
+      setCopiedStructure(key);
+      clearTimeout(copiedTimerRef.current);
+      copiedTimerRef.current = setTimeout(() => setCopiedStructure(null), 1500);
+      toast.success(`Copied ${key} pro structure!`);
+    } catch (err) {
+      console.error("Failed to copy: ", err);
+      toast.error(`Failed to copy ${key} pro structure`);
+    }
   };
 
   return (
@@ -127,11 +112,16 @@ const ProFileType = ({ searchTerm }) => {
                   variant="outline"
                   size="sm"
                   onClick={() => handleCopy(key, structure)}
-                  disabled={copyingStructure === key}
                   aria-label={`Copy ${key} pro structure`}
                 >
-                  <Copy size={20} />
-                  <span className="sr-only">Copy</span>
+                  {copiedStructure === key ? (
+                    <Check className="text-green-500" size={20} />
+                  ) : (
+                    <Copy size={20} />
+                  )}
+                  <span className="sr-only">
+                    {copiedStructure === key ? "Copied" : "Copy"}
+                  </span>
                 </Button>
               </div>
               <div className="bg-secondary p-4 rounded-lg relative">
@@ -168,11 +158,18 @@ const ProFileType = ({ searchTerm }) => {
                   onClick={() =>
                     handleCopy(structure.projectType, structure.structure)
                   }
-                  disabled={copyingStructure === structure.projectType}
                   aria-label={`Copy ${structure.projectType} pro structure`}
                 >
-                  <Copy size={20} />
-                  <span className="sr-only">Copy</span>
+                  {copiedStructure === structure.projectType ? (
+                    <Check className="text-green-500" size={20} />
+                  ) : (
+                    <Copy size={20} />
+                  )}
+                  <span className="sr-only">
+                    {copiedStructure === structure.projectType
+                      ? "Copied"
+                      : "Copy"}
+                  </span>
                 </Button>
               </div>
               <div className="bg-secondary p-4 rounded-lg relative">

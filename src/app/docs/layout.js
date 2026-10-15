@@ -1,18 +1,30 @@
-"use client";
-
-import { SidebarNav } from "@/components/sidebar";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import React from "react";
-
-export default function Layout({ children }) {
+import { metadataFilegen } from "../metadata";
+export const metadata = {
+  title: "Documentation — FileGen",
+  description:
+    "Learn the FileGen workspace, outline syntax, templates, and CLI.",
+  alternates: { canonical: `${metadataFilegen.metadataBase}/docs` },
+};
+export default function DocsLayout({ children }) {
   return (
-    <div className="flex min-h-screen">
-      <SidebarNav />
-      <main className="flex-1">
-        <ScrollArea className="h-screen">
-          <div className="container max-w-full py-6">{children}</div>
-        </ScrollArea>
-      </main>
+    <div className="fg-container docs-layout">
+      <aside className="docs-nav">
+        <span className="eyebrow">THE FIELD GUIDE</span>
+        {[
+          ["introduction", "Getting started"],
+          ["installation", "Command line"],
+          ["usage", "Structure syntax"],
+          ["interactive", "The workspace"],
+          ["templates", "Templates"],
+          ["aichat", "AI assistant"],
+          ["license", "License"],
+        ].map(([id, label]) => (
+          <a key={id} href={`/docs#${id}`}>
+            {label}
+          </a>
+        ))}
+      </aside>
+      <div className="docs-content">{children}</div>
     </div>
   );
 }

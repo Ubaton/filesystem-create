@@ -1,5 +1,5 @@
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+import { initializeApp, getApps } from "firebase/app";
+import { getAnalytics, isSupported } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -12,13 +12,20 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_MEASUREMENT_ID,
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Initialize Firebase once (hot reload safe)
+const app = getApps()[0] ?? initializeApp(firebaseConfig);
 
-// Initialize Analytics only on the client side
+// Initialize Analytics only on the client, and never let a missing/partial
+// Firebase config (e.g. local dev without .env) crash the page
 let analytics = null;
-if (typeof window !== "undefined") {
-  analytics = getAnalytics(app);
+if (typeof window !== "undefined" && firebaseConfig.projectId) {
+  isSupported()
+    .then((supported) => {
+      if (supported) {
+        analytics = getAnalytics(app);
+      }
+    })
+    .catch(() => {});
 }
 
 const db = getFirestore(app);

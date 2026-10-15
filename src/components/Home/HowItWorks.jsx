@@ -213,6 +213,9 @@ const HowItWorks = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="text-center mb-16"
         >
+          <span className="inline-block mb-4 rounded-full border border-primary/30 bg-primary/10 px-4 py-1 text-xs font-semibold uppercase tracking-widest text-primary">
+            Workflow
+          </span>
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl mb-4 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
             How It Works
           </h2>

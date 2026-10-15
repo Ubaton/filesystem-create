@@ -1,14 +1,5 @@
-"use client";
+import TemplateLibrary from "@/components/template-library";
 
-import FilesType from "@/components/Files/FilesType";
-import React from "react";
-
-const page = () => {
-  return (
-    <div>
-      <FilesType />
-    </div>
-  );
-};
-
-export default page;
+export default function ProjectFilePage() {
+  return <TemplateLibrary />;
+}

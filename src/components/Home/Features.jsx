@@ -267,6 +267,9 @@ const Index = () => {
       {/* Hero Section */}
       <div className="mx-auto py-16">
         <div className="text-center mb-16">
+          <span className="inline-block mb-4 rounded-full border border-primary/30 bg-primary/10 px-4 py-1 text-xs font-semibold uppercase tracking-widest text-primary">
+            Features
+          </span>
           <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
             Powerful Features
           </h1>
