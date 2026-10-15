@@ -1,0 +1,626 @@
+/* ---------- Section shell & scroll-driven tokens ---------- */
+.architecture-story {
+  position: relative;
+  z-index: 1;
+  margin-top: 95px;
+  border-top: 1px solid var(--fg-line);
+  border-bottom: 1px solid var(--fg-line);
+  --blueprint-accent: #62967a;
+  --blueprint-stage: calc(100svh - 100px);
+  --story-progress: 0;
+  --story-fill: 0;
+  --story-ease: var(--fg-ease, cubic-bezier(0.16, 1, 0.3, 1));
+  --mono: var(--font-geist-mono), monospace;
+}
+.architecture-story[data-step="1"] {
+  --blueprint-accent: #739cb7;
+}
+.architecture-story[data-step="2"] {
+  --blueprint-accent: #b09561;
+}
+.architecture-story :is(.status-dot, .story-rail-dot, .story-rail-fill, .blueprint-caret, .architecture-index, li svg) {
+  transition:
+    background-color 0.5s var(--story-ease),
+    color 0.5s var(--story-ease),
+    border-color 0.5s var(--story-ease);
+}
+
+/* ---------- Sticky stage ---------- */
+.architecture-stage {
+  position: sticky;
+  top: 90px;
+  height: var(--blueprint-stage);
+  pointer-events: none;
+  z-index: 0;
+}
+.architecture-stage-inner {
+  height: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+.blueprint-visual {
+  position: relative;
+  width: 56%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-image:
+    linear-gradient(var(--fg-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--fg-line) 1px, transparent 1px);
+  background-size: 40px 40px;
+  /* subtle parallax drift of the drafting grid */
+  background-position: 0 calc(var(--story-progress) * -20px);
+  mask-image: linear-gradient(0deg, transparent, #000 15%, #000 85%, transparent);
+}
+.blueprint-topline {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font: 8px var(--mono);
+  letter-spacing: 1px;
+  color: var(--fg-muted);
+  padding: 20px 12px 20px 28px;
+  border-bottom: 1px solid var(--fg-line);
+}
+
+/* FIG. number rolls continuously with progress */
+.figure-roll {
+  display: inline-block;
+  height: 1.2em;
+  line-height: 1.2em;
+  overflow: hidden;
+  vertical-align: bottom;
+  color: var(--blueprint-accent);
+}
+.figure-roll-strip {
+  display: flex;
+  flex-direction: column;
+  transform: translateY(calc(var(--story-progress) * -1.2em));
+}
+
+/* ---------- Canvas ---------- */
+.blueprint-canvas {
+  height: clamp(300px, 56svh, 620px);
+  position: relative;
+}
+.blueprint-canvas canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.blueprint-corner {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 0 solid var(--blueprint-accent);
+  opacity: 0.7;
+}
+.blueprint-corner-tl {
+  top: 12px;
+  left: 28px;
+  border-width: 1px 0 0 1px;
+}
+.blueprint-corner-br {
+  bottom: 12px;
+  right: 12px;
+  border-width: 0 1px 1px 0;
+}
+.blueprint-fallback {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  inset: 0;
+  color: var(--fg-muted);
+}
+.fallback-floor {
+  stroke: currentColor;
+  stroke-width: 0.8;
+  opacity: 0.45;
+  transition:
+    opacity 0.5s var(--story-ease),
+    stroke 0.5s var(--story-ease);
+}
+.architecture-story[data-step="0"] .fallback-floor-0,
+.architecture-story[data-step="1"] .fallback-floor-1,
+.architecture-story[data-step="2"] .fallback-floor-2 {
+  stroke: var(--blueprint-accent);
+  opacity: 1;
+}
+.blueprint-canvas[data-ready="true"] .blueprint-fallback {
+  display: none;
+}
+
+/* ---------- Readout: layer labels + counters ---------- */
+.blueprint-readout {
+  padding: 16px 12px 12px 28px;
+  border-top: 1px solid var(--fg-line);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 15px;
+}
+.blueprint-layer-labels {
+  display: flex;
+  gap: 15px;
+  font: 8px var(--mono);
+  color: var(--fg-muted);
+}
+.blueprint-layer-labels span {
+  position: relative;
+  padding-bottom: 6px;
+  transition: color 0.4s var(--story-ease);
+}
+.blueprint-layer-labels span::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--blueprint-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s var(--story-ease);
+}
+.architecture-story[data-step="0"] .blueprint-layer-labels span:nth-child(1),
+.architecture-story[data-step="1"] .blueprint-layer-labels span:nth-child(2),
+.architecture-story[data-step="2"] .blueprint-layer-labels span:nth-child(3) {
+  color: var(--blueprint-accent);
+}
+.architecture-story[data-step="0"] .blueprint-layer-labels span:nth-child(1)::after,
+.architecture-story[data-step="1"] .blueprint-layer-labels span:nth-child(2)::after,
+.architecture-story[data-step="2"] .blueprint-layer-labels span:nth-child(3)::after {
+  transform: scaleX(1);
+}
+.blueprint-counters {
+  display: flex;
+  gap: 16px;
+  margin: 0;
+}
+.blueprint-counters div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+.blueprint-counters dt {
+  font: 7px var(--mono);
+  letter-spacing: 1px;
+  color: var(--fg-muted);
+}
+.blueprint-counters dd {
+  margin: 0;
+  font: 500 15px var(--mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-text);
+}
+
+/* ---------- Typed path ---------- */
+.blueprint-path {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px 10px 28px;
+  border-top: 1px dashed var(--fg-line);
+  font: 9px var(--mono);
+  color: var(--fg-muted);
+  min-width: 0;
+}
+.blueprint-path code {
+  color: var(--fg-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.blueprint-path-prompt {
+  color: var(--blueprint-accent);
+}
+.blueprint-caret {
+  width: 6px;
+  height: 11px;
+  margin-left: -6px;
+  background: var(--blueprint-accent);
+  animation: blueprint-blink 1.1s steps(1) infinite;
+}
+@keyframes blueprint-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ---------- Scroll cue (fades after first scroll) ---------- */
+.blueprint-scroll-cue {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 9px;
+  color: var(--fg-muted);
+  font: 7px var(--mono);
+  letter-spacing: 1px;
+  padding: 15px;
+  transition:
+    opacity 0.6s var(--story-ease),
+    transform 0.6s var(--story-ease);
+}
+.blueprint-scroll-cue > span {
+  position: relative;
+  height: 22px;
+  width: 1px;
+  background: var(--fg-line);
+  overflow: hidden;
+}
+.blueprint-scroll-cue > span::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--blueprint-accent);
+  animation: blueprint-cue 1.8s var(--story-ease) infinite;
+}
+@keyframes blueprint-cue {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+.architecture-story[data-scrolled="true"] .blueprint-scroll-cue {
+  opacity: 0;
+  transform: translateY(6px);
+}
+.architecture-story[data-scrolled="true"] .blueprint-scroll-cue > span::after {
+  animation: none;
+}
+
+/* ---------- Chapter rail ---------- */
+.story-rail {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  height: min(62%, 420px);
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+  z-index: 2;
+}
+.story-rail-track {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--fg-line);
+}
+.story-rail-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--blueprint-accent);
+  transform: scaleY(var(--story-fill));
+  transform-origin: top;
+}
+.story-rail ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.story-rail li {
+  display: flex;
+  justify-content: center;
+}
+.story-rail-tick {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  color: var(--fg-muted);
+  text-decoration: none;
+}
+.story-rail-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1px solid var(--fg-muted);
+  background: var(--fg-bg);
+  transition: transform 0.4s var(--story-ease);
+}
+.story-rail-tick[data-reached="true"] .story-rail-dot {
+  border-color: var(--blueprint-accent);
+  background: var(--blueprint-accent);
+}
+.story-rail-tick[aria-current="step"] .story-rail-dot {
+  transform: scale(1.35);
+  box-shadow: 0 0 0 4px var(--fg-bg), 0 0 0 5px var(--blueprint-accent);
+}
+.story-rail-label {
+  position: absolute;
+  left: calc(100% + 6px);
+  display: flex;
+  gap: 6px;
+  font: 7px var(--mono);
+  letter-spacing: 1px;
+  white-space: nowrap;
+  padding: 3px 6px;
+  background: var(--fg-bg);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition:
+    opacity 0.3s var(--story-ease),
+    transform 0.3s var(--story-ease);
+}
+.story-rail-tick[aria-current="step"] .story-rail-label,
+.story-rail-tick:hover .story-rail-label,
+.story-rail-tick:focus-visible .story-rail-label {
+  opacity: 1;
+  transform: none;
+  color: var(--blueprint-accent);
+}
+.story-rail-tick:focus-visible {
+  outline: 1px solid var(--blueprint-accent);
+  outline-offset: 2px;
+}
+
+/* ---------- Chapters ---------- */
+.architecture-chapters {
+  position: relative;
+  margin-top: calc(-1 * var(--blueprint-stage));
+  z-index: 1;
+  pointer-events: none;
+}
+.architecture-chapter {
+  --reveal: 1;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  padding: 80px 0;
+  scroll-margin-top: 100px;
+}
+.architecture-copy {
+  width: 39%;
+  pointer-events: auto;
+}
+/* Staggered reveal tied to scroll position: each item lags by its --i. */
+.architecture-copy .reveal {
+  --t: clamp(0, calc(var(--reveal) * 6 - var(--i) * 0.55), 1);
+  opacity: calc(0.08 + var(--t) * 0.92);
+  transform: translateY(calc((1 - var(--t)) * 18px));
+  will-change: transform, opacity;
+}
+.architecture-index {
+  color: var(--blueprint-accent);
+}
+.architecture-copy h2 {
+  font-size: clamp(30px, 3.5vw, 44px);
+  line-height: 1.15;
+  font-weight: 550;
+  letter-spacing: -1.8px;
+  margin: 24px 0;
+  text-wrap: balance;
+}
+.architecture-copy > p {
+  font-size: 14px;
+  line-height: 1.9;
+  color: var(--fg-muted);
+  max-width: 370px;
+}
+.architecture-copy ul {
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+.architecture-copy li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  color: var(--fg-muted);
+}
+.architecture-copy li svg {
+  color: var(--blueprint-accent);
+  flex-shrink: 0;
+}
+.architecture-copy .inline-link {
+  font-size: 12px;
+  margin-top: 30px;
+}
+.architecture-file {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border-top: 1px solid var(--fg-line);
+  margin-top: 42px;
+  padding-top: 17px;
+  font: 9px var(--mono);
+  color: var(--fg-muted);
+}
+.architecture-file > span:last-child {
+  margin-left: auto;
+  font-size: 7px;
+  white-space: nowrap;
+}
+.architecture-file .status-dot {
+  background: var(--blueprint-accent);
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1000px) {
+  .architecture-copy {
+    width: 40%;
+  }
+  .blueprint-visual {
+    width: 54%;
+  }
+  .blueprint-layer-labels {
+    gap: 10px;
+    font-size: 7px;
+  }
+  .blueprint-layer-labels span:not(:nth-child(1)) {
+    display: none;
+  }
+  .architecture-copy h2 {
+    font-size: 34px;
+  }
+  .architecture-copy > p {
+    font-size: 13px;
+  }
+  .blueprint-topline {
+    font-size: 7px;
+  }
+}
+
+/* ---------- Mobile: visual stacks on top as a compact sticky header ---------- */
+@media (max-width: 640px) {
+  .architecture-story {
+    margin-top: 65px;
+    --blueprint-stage: 46svh;
+  }
+  .architecture-stage {
+    top: 66px;
+    z-index: 3;
+    background: var(--fg-bg);
+    border-bottom: 1px solid var(--fg-line);
+  }
+  .architecture-stage-inner {
+    width: 100%;
+  }
+  .blueprint-visual {
+    width: 100%;
+    mask-image: none;
+    background-size: 32px 32px;
+  }
+  .blueprint-canvas {
+    height: auto;
+    min-height: 0;
+    flex: 1;
+  }
+  .blueprint-topline,
+  .blueprint-readout,
+  .blueprint-path {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .blueprint-topline {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: 7px;
+  }
+  .blueprint-readout {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  .blueprint-layer-labels span:not(:nth-child(1)) {
+    display: inline;
+  }
+  .blueprint-layer-labels {
+    display: none;
+  }
+  .blueprint-counters dd {
+    font-size: 12px;
+  }
+  .blueprint-corner-tl {
+    left: 12px;
+  }
+  .blueprint-path {
+    order: 1;
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+  .blueprint-scroll-cue {
+    display: none;
+  }
+  /* Rail becomes a horizontal progress bar under the visual */
+  .story-rail {
+    position: relative;
+    order: 2;
+    left: auto;
+    top: auto;
+    height: 34px;
+    margin: 0 20px;
+    transform: none;
+  }
+  .story-rail-track {
+    left: 12px;
+    right: 12px;
+    top: 50%;
+    bottom: auto;
+    width: auto;
+    height: 1px;
+  }
+  .story-rail-fill {
+    transform: scaleX(var(--story-fill));
+    transform-origin: left;
+  }
+  .story-rail ol {
+    flex-direction: row;
+  }
+  .story-rail-label {
+    display: none;
+  }
+  .story-rail-tick {
+    width: 32px;
+    height: 32px;
+  }
+  .architecture-chapters {
+    margin-top: 0;
+  }
+  .architecture-chapter {
+    min-height: 82svh;
+    align-items: flex-start;
+    padding: 42px 0 75px;
+    scroll-margin-top: calc(46svh + 66px);
+  }
+  .architecture-copy {
+    width: 100%;
+    padding-top: 10px;
+  }
+  .architecture-copy h2 {
+    font-size: 32px;
+    max-width: 340px;
+  }
+  .architecture-copy > p {
+    font-size: 13px;
+    max-width: 100%;
+  }
+  .architecture-copy ul {
+    gap: 12px;
+    margin-top: 22px;
+  }
+  .architecture-file {
+    margin-top: 28px;
+  }
+  .architecture-copy .inline-link {
+    margin-top: 23px;
+  }
+}
+
+/* ---------- Reduced motion: no motion, everything visible ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .architecture-story *,
+  .architecture-story *::before,
+  .architecture-story *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto;
+  }
+  .architecture-copy .reveal {
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+  }
+  .blueprint-visual {
+    background-position: 0 0;
+  }
+  .blueprint-scroll-cue {
+    display: none;
+  }
+}

@@ -9,9 +9,12 @@ import {
   Terminal,
 } from "lucide-react";
 import Workspace from "@/components/workspace";
+import GenerationStory from "@/components/generation-story";
+import ArchitectureStory from "@/components/architecture-story";
 export default function Home() {
   return (
     <div className="fg-home">
+      <GenerationStory />
       <section className="home-intro fg-container">
         <div className="eyebrow">
           <span className="status-dot" /> SMALL TOOL. BETTER STARTS.
@@ -60,6 +63,7 @@ export default function Home() {
           </Link>
         </div>
       </section>
+      <ArchitectureStory />
       <section className="fg-container process-section">
         <div className="process-intro">
           <span className="eyebrow">SKIP THE REPETITIVE PART</span>
