@@ -12,12 +12,11 @@ import {
   Menu,
   X,
 } from "lucide-react";
-import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -28,45 +27,68 @@ import {
 const navigationItems = [
   {
     title: "Introduction",
-    href: "#introduction",
+    id: "introduction",
     icon: BookOpen,
   },
   {
     title: "Installation",
-    href: "#installation",
+    id: "installation",
     icon: Download,
   },
   {
     title: "Usage",
-    href: "#usage",
+    id: "usage",
     icon: Code2,
   },
   {
     title: "Interactive",
-    href: "#interactive",
+    id: "interactive",
     icon: Sparkles,
   },
   {
     title: "Templates",
-    href: "#templates",
+    id: "templates",
     icon: FileText,
   },
   {
     title: "AIChat",
-    href: "#aichat",
+    id: "aichat",
     icon: Sparkles,
     badge: "New",
   },
   {
     title: "License",
-    href: "#license",
+    id: "license",
     icon: Shield,
   },
 ];
 
 export function SidebarNav() {
-  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("introduction");
+
+  // Scroll-spy: highlight the section currently in view
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+
+        if (visible.length > 0) {
+          setActiveSection(visible[0].target.id);
+        }
+      },
+      { rootMargin: "-20% 0px -60% 0px" }
+    );
+
+    navigationItems.forEach((item) => {
+      const el = document.getElementById(item.id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   const NavContent = () => (
     <div className="flex h-full flex-col">
@@ -80,12 +102,13 @@ export function SidebarNav() {
         <nav className="p-4 space-y-1">
           {navigationItems.map((item) => (
             <Link
-              key={item.href}
-              href={item.href}
+              key={item.id}
+              href={`#${item.id}`}
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
                 "hover:bg-accent hover:text-accent-foreground",
-                pathname === item.href && "bg-accent text-accent-foreground"
+                activeSection === item.id &&
+                  "bg-accent text-accent-foreground font-medium"
               )}
               onClick={() => setIsOpen(false)}
             >
@@ -119,7 +142,12 @@ export function SidebarNav() {
       {/* Mobile Sidebar */}
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild className="md:hidden">
-          <Button variant="ghost" size="icon" className="md:hidden">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden fixed bottom-4 left-4 z-40 rounded-full border bg-background shadow-lg"
+            aria-label="Open docs navigation"
+          >
             <Menu className="h-6 w-6" />
           </Button>
         </SheetTrigger>
@@ -140,7 +168,7 @@ export function SidebarNav() {
       </Sheet>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex w-72 flex-col border-r">
+      <aside className="hidden md:flex w-72 flex-col border-r sticky top-16 h-[calc(100vh-4rem)] shrink-0">
         <NavContent />
       </aside>
     </>

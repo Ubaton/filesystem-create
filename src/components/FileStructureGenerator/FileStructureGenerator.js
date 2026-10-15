@@ -12,8 +12,6 @@ import {
   Folder,
   AlertCircle,
 } from "lucide-react";
-import JSZip from "jszip";
-import FileSaver from "file-saver";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -27,7 +25,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -214,7 +211,6 @@ export default function FileStructureGenerator() {
   const [defaultFileType, setDefaultFileType] = useState("TSX");
   const [structure, setStructure] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generationProgress, setGenerationProgress] = useState(0);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [savedProjects, setSavedProjects] = useState([]);
   const [errors, setErrors] = useState([]);
@@ -287,10 +283,9 @@ export default function FileStructureGenerator() {
     return errors;
   }, []);
 
-  // Generate structure with progress tracking
-  const generateStructure = useCallback(async () => {
+  // Generate structure
+  const generateStructure = useCallback(() => {
     setIsGenerating(true);
-    setGenerationProgress(0);
     setErrors([]);
 
     try {
@@ -305,12 +300,6 @@ export default function FileStructureGenerator() {
       const lines = input.split("\n").filter((line) => line.trim() !== "");
       const root = { name: "root", children: [], type: "folder" };
       const stack = [root];
-
-      // Simulate progress
-      for (let i = 0; i <= 100; i += 10) {
-        setGenerationProgress(i);
-        await new Promise((resolve) => setTimeout(resolve, 50));
-      }
 
       lines.forEach((line, index) => {
         const level = getIndentLevel(line) / INDENT_SIZE;
@@ -373,15 +362,18 @@ export default function FileStructureGenerator() {
       setErrors(["An unexpected error occurred during generation"]);
     } finally {
       setIsGenerating(false);
-      setGenerationProgress(0);
     }
   }, [input, defaultFileType, validateInput, setStructure]);
 
-  // Generate and download ZIP
+  // Generate and download ZIP (JSZip/file-saver load on demand, not on page load)
   const generateZip = useCallback(async () => {
     if (!structure) return;
 
     try {
+      const [{ default: JSZip }, { default: FileSaver }] = await Promise.all([
+        import("jszip"),
+        import("file-saver"),
+      ]);
       const zip = new JSZip();
       let fileCount = 0;
 
@@ -632,16 +624,6 @@ tsconfig.json`;
                     </ul>
                   </AlertDescription>
                 </Alert>
-              )}
-
-              {isGenerating && (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span>Generating structure...</span>
-                    <span>{generationProgress}%</span>
-                  </div>
-                  <Progress value={generationProgress} className="w-full" />
-                </div>
               )}
 
               <Tabs value={activeTab} onValueChange={setActiveTab}>

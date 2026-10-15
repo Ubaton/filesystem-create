@@ -34,3 +34,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.claude
+DESIGN.md
+MARKET_RESEARCH.md
+tests

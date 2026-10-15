@@ -1,11 +1,7 @@
-import React from "react";
+import AccountFree from "@/components/account-free";
 
 const SignInPage = () => {
-  return (
-    <div>
-      <h1>SignInPage</h1>
-    </div>
-  );
+  return <AccountFree />;
 };
 
 export default SignInPage;
