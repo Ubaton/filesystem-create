@@ -1,12 +1,11 @@
 import Link from "next/link";
-import { ArrowRight, LockKeyhole } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { Laptop } from "@/components/ui/isometric/laptop";
 
 export default function AccountFree() {
   return (
     <section className="account-free">
-      <div className="step-icon">
-        <LockKeyhole size={23} />
-      </div>
+      <Laptop className="page-figure" aria-hidden="true" />
       <div className="page-heading">
         <span className="eyebrow">ONE LESS THING TO SET UP</span>
         <h1>You’re already good to go.</h1>

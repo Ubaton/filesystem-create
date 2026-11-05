@@ -2,12 +2,12 @@ import Link from "next/link";
 import {
   ArrowRight,
   ArrowUpRight,
-  Braces,
-  Command,
-  FolderTree,
   LockKeyhole,
   Terminal,
 } from "lucide-react";
+import { Files } from "@/components/ui/isometric/files";
+import { Laptop } from "@/components/ui/isometric/laptop";
+import { Parcel } from "@/components/ui/isometric/parcel";
 import Workspace from "@/components/workspace";
 import GenerationStory from "@/components/generation-story";
 import ArchitectureStory from "@/components/architecture-story";
@@ -83,25 +83,23 @@ export default function Home() {
         <div className="process-steps">
           {[
             {
-              icon: Braces,
+              figure: Laptop,
               title: "Sketch it out",
               text: "Write your files and folders as a simple outline. Or pick a starter and make it yours.",
             },
             {
-              icon: FolderTree,
+              figure: Files,
               title: "See it take shape",
               text: "Preview your structure as you type. Open files, check the details, and get everything in order.",
             },
             {
-              icon: Command,
+              figure: Parcel,
               title: "Make something great",
               text: "Download your project as a ZIP, unzip it, and start building. Your next idea is waiting.",
             },
-          ].map(({ icon: Icon, title, text }, i) => (
+          ].map(({ figure: Figure, title, text }, i) => (
             <div className="process-step" key={title}>
-              <div className="step-icon">
-                <Icon size={20} />
-              </div>
+              <Figure className="step-figure" aria-hidden="true" />
               <div>
                 <span className="step-number">0{i + 1}</span>
                 <h3>{title}</h3>

@@ -795,6 +795,26 @@ body {
   border-radius: 12px;
   background: var(--fg-surface);
 }
+/* Isometric figures: the app's shadcn tokens are bare HSL triplets, so map to --fg-* colours. */
+[data-iso] {
+  --iso-plate: var(--fg-surface);
+  --iso-hi: var(--fg-text);
+  --iso-edge: var(--fg-muted);
+  --iso-mid: color-mix(in oklab, var(--fg-muted) 45%, var(--fg-surface));
+  --iso-lo: var(--fg-line);
+  --iso-accent: var(--fg-green);
+}
+.step-figure {
+  width: 112px;
+  flex-shrink: 0;
+}
+.card-figure {
+  width: 150px;
+}
+.page-figure {
+  width: 220px;
+  margin: 0 auto 18px;
+}
 .template-card-top {
   display: flex;
   justify-content: space-between;

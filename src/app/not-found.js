@@ -1,12 +1,11 @@
 import Link from "next/link";
-import { ArrowRight, FolderSearch } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { Files } from "@/components/ui/isometric/files";
 
 export default function NotFound() {
   return (
     <div className="fg-container inner-page account-free">
-      <div className="step-icon">
-        <FolderSearch size={24} />
-      </div>
+      <Files className="page-figure" aria-hidden="true" />
       <div className="page-heading">
         <span className="eyebrow">404 / A LITTLE OUT OF PLACE</span>
         <h1>This file isn’t in the tree.</h1>
