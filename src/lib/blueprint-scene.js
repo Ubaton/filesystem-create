@@ -15,7 +15,7 @@ const FILE_SLOTS = [[-1.55, 0.25], [-1.1, 0.25], [-0.65, 0.25], [0.65, 0.25], [1
  */
 export function createBlueprintScene(host) {
   const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "low-power" });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
   renderer.setClearColor(0, 0);
   renderer.domElement.setAttribute("aria-hidden", "true");
   host.appendChild(renderer.domElement);
@@ -134,7 +134,7 @@ export function createBlueprintScene(host) {
     const p = shown;
     const dark = document.documentElement.classList.contains("dark");
     neutral.set(dark ? "#8b9a91" : "#6f7d75");
-    const idle = reduced ? 0 : 1;
+    const idle = 0; // no ambient motion: the scene only renders when scroll changes it
 
     // Camera: slow orbit + dolly across the story, tiny idle sway.
     const az = 0.62 + ease(p / 2) * 0.32 + Math.sin(time * 0.35) * 0.02 * idle;
@@ -165,7 +165,7 @@ export function createBlueprintScene(host) {
     });
     const cBar = codeBars[caretLine];
     caret.position.set(cBar.position.x + cBar.scale.x + 0.05, top + 0.01, cBar.position.z);
-    caret.visible = typing < 1 || Math.sin(time * 5) > 0 || reduced;
+    caret.visible = true;
 
     // Sheet 2 files arc up from sheet 1 into folder slots.
     files.forEach((f, i) => {
@@ -232,7 +232,7 @@ export function createBlueprintScene(host) {
     shown += (target - shown) * (1 - Math.exp(-dt * DAMPING));
     if (Math.abs(target - shown) < 1e-4) shown = target;
     draw();
-    raf = requestAnimationFrame(tick);
+    if (shown !== target) raf = requestAnimationFrame(tick);
   }
   function start() {
     if (!raf && !disposed && !reduced && visible) {
@@ -281,8 +281,10 @@ export function createBlueprintScene(host) {
         stop();
         shown = target;
         draw();
-      } else {
+      } else if (shown !== target) {
         start();
+      } else {
+        draw(); // same scroll position, but the theme may have changed
       }
     },
     resize,

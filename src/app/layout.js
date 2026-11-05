@@ -38,9 +38,6 @@ export default function RootLayout({ children }) {
           <meta name="google-site-verification" content={process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION} />
         )}
         
-        {/* Performance hints */}
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        
         {/* Canonical link for crawlers */}
         <link rel="canonical" href={metadataFilegen.alternates?.canonical || "https://filegen.vercel.app"} />
         

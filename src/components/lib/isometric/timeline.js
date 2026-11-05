@@ -12,6 +12,19 @@ export const outBack = (p) => {
   return 1 + (c + 1) * Math.pow(p - 1, 3) + c * Math.pow(p - 1, 2)
 }
 
+const FRAME = 1 / 30 // looping illustrations read fine at 30 fps and cost half as much
+const SCROLL_SETTLE_MS = 140
+let scrollingUntil = 0
+let watching = false
+/** One shared passive listener for the page's lifetime, however many figures mount. */
+function watchScroll() {
+  if (watching) return
+  watching = true
+  window.addEventListener("scroll", () => {
+    scrollingUntil = performance.now() + SCROLL_SETTLE_MS
+  }, { passive: true })
+}
+
 /**
  * Runs a repeating timeline for a figure. It stops offscreen through the shared
  * loop, speeds up under the pointer, and shifts `root` slightly for parallax.
@@ -24,16 +37,24 @@ export function cycle({ stage, svg }, speed, { duration, hold, root, render, onP
   const py = spring(0, 70, 14, 0.02)
   let base = speed
   let t = 0
+  let pending = FRAME
+  watchScroll()
 
   const L = loop(stage, (dt) => {
     if (reducedMotion()) {
       render(hold, dt)
       return false
     }
-    stepAll([rate, px, py], dt)
-    t = (t + dt * base * rate.x) % duration
+    // Scrolling comes first: the figure holds its frame until the page settles.
+    if (performance.now() < scrollingUntil) return true
+    pending += dt
+    if (pending < FRAME) return true
+    const elapsed = pending
+    pending = 0
+    stepAll([rate, px, py], elapsed)
+    t = (t + elapsed * base * rate.x) % duration
     root.setAttribute("transform", `translate(${px.x.toFixed(2)} ${py.x.toFixed(2)})`)
-    render(t, dt)
+    render(t, elapsed)
     return true
   })
   b.add(L.stop)

@@ -817,6 +817,12 @@ body {
 }
 .capability-section {
   padding-block: 96px 24px;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1300px;
+}
+.process-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 560px;
 }
 .capability-head h2 {
   font-size: 38px;

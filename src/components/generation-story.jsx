@@ -41,6 +41,8 @@ const chapters = [
   },
 ];
 
+const SAMPLES = 400; // route points cached per layout, so scroll never queries SVG geometry
+
 // Decoration only: scroll never changes the editor, focus, or document layout.
 export default function GenerationStory() {
   const scene = useRef(null);
@@ -57,6 +59,7 @@ export default function GenerationStory() {
     let length = route.getTotalLength();
     let frame = 0;
     let end = 1;
+    let samples = [];
 
     const measure = () => {
       const process = home.querySelector(".process-section");
@@ -77,6 +80,9 @@ export default function GenerationStory() {
       route.setAttribute("d", path);
       drawn.setAttribute("d", path);
       length = route.getTotalLength();
+      samples = Array.from({ length: SAMPLES + 1 }, (_, i) =>
+        route.getPointAtLength((i / SAMPLES) * length),
+      );
       // Keep the later chapters in section breathing room, clear of all copy.
       if (process)
         markers[2].style.top = `${process.offsetTop + process.offsetHeight - 65}px`;
@@ -97,18 +103,22 @@ export default function GenerationStory() {
       );
       const targetY = 45 + (end - 45) * scrollProgress;
       let low = 0,
-        high = length;
-      for (let i = 0; i < 18; i++) {
-        const middle = (low + high) / 2;
-        if (route.getPointAtLength(middle).y < targetY) low = middle;
+        high = SAMPLES;
+      while (high - low > 1) {
+        const middle = (low + high) >> 1;
+        if (samples[middle].y < targetY) low = middle;
         else high = middle;
       }
-      const progress =
-        media.matches || scrollProgress === 1 ? 1 : (low + high) / 2 / length;
+      const a = samples[low],
+        b = samples[high];
+      const within = b.y > a.y ? Math.min(1, Math.max(0, (targetY - a.y) / (b.y - a.y))) : 0;
+      const done = media.matches || scrollProgress === 1;
+      const progress = done ? 1 : (low + within) / SAMPLES;
       // A normalized dash reveals the route without changing its geometry.
       drawn.style.strokeDashoffset = String(1 - progress);
-      const point = route.getPointAtLength(progress * length);
-      cursor.setAttribute("transform", `translate(${point.x} ${point.y})`);
+      const x = done ? samples[SAMPLES].x : a.x + (b.x - a.x) * within;
+      const y = done ? samples[SAMPLES].y : a.y + (b.y - a.y) * within;
+      cursor.setAttribute("transform", `translate(${x} ${y})`);
       markers.forEach((marker, index) => {
         const amount = media.matches
           ? 1
@@ -158,23 +168,6 @@ export default function GenerationStory() {
         preserveAspectRatio="none"
         fill="none"
       >
-        <defs>
-          <filter
-            id="story-grain-filter"
-            x="0"
-            y="0"
-            width="100%"
-            height="100%"
-          >
-            <feTurbulence
-              type="fractalNoise"
-              baseFrequency="0.76"
-              numOctaves="3"
-              stitchTiles="stitch"
-            />
-            <feColorMatrix type="saturate" values="0" />
-          </filter>
-        </defs>
         <path
           className="story-route-base"
           d="M 120 50 V 150 Q 120 185 85 185 H 44 Q 24 185 24 220 V 1160 Q 24 1220 84 1220 H 240 Q 280 1220 280 1260 V 1420 Q 280 1460 340 1460 H 1120 Q 1176 1460 1176 1510 V 1680 Q 1176 1730 1120 1730 H 990 Q 950 1730 950 1770 V 1910"
@@ -211,9 +204,7 @@ export default function GenerationStory() {
           </div>
         </div>
       ))}
-      <svg className="story-grain-texture" width="100%" height="100%">
-        <rect width="100%" height="100%" filter="url(#story-grain-filter)" />
-      </svg>
+      <div className="story-grain-texture" />
     </div>
   );
 }
