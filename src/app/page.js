@@ -5,6 +5,8 @@ import {
   LockKeyhole,
   Terminal,
 } from "lucide-react";
+import CapabilityBento from "@/components/capability-bento";
+import { TerminalScaffold } from "@/components/ui/isometric/terminal-scaffold";
 import { Files } from "@/components/ui/isometric/files";
 import { Laptop } from "@/components/ui/isometric/laptop";
 import { Parcel } from "@/components/ui/isometric/parcel";
@@ -64,6 +66,7 @@ export default function Home() {
         </div>
       </section>
       <ArchitectureStory />
+      <CapabilityBento />
       <section className="fg-container process-section">
         <div className="process-intro">
           <span className="eyebrow">SKIP THE REPETITIVE PART</span>
@@ -115,6 +118,7 @@ export default function Home() {
           <h2>More of a terminal person?</h2>
           <p>Meet FileGen right where you build.</p>
         </div>
+        <TerminalScaffold className="terminal-figure" aria-hidden="true" />
         <div>
           <code>
             <span>$</span> npx @ubaton/filegen

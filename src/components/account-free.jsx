@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { Laptop } from "@/components/ui/isometric/laptop";
+import { LocalVault } from "@/components/ui/isometric/local-vault";
 
 export default function AccountFree() {
   return (
     <section className="account-free">
-      <Laptop className="page-figure" aria-hidden="true" />
+      <LocalVault className="page-figure" aria-hidden="true" />
       <div className="page-heading">
         <span className="eyebrow">ONE LESS THING TO SET UP</span>
         <h1>You’re already good to go.</h1>

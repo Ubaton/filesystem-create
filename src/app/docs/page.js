@@ -2,6 +2,8 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import CopyCommand from "@/components/copy-command";
 import ChatAssistantLazy from "@/components/chat/chat-assistant-lazy";
+import { OutlineForge } from "@/components/ui/isometric/outline-forge";
+import { ZipPress } from "@/components/ui/isometric/zip-press";
 export default function DocsPage() {
   return (
     <div className="docs-article">
@@ -31,6 +33,7 @@ export default function DocsPage() {
       <section id="usage">
         <span className="eyebrow">02 / THE OUTLINE</span>
         <h2>Simple text. Real structure.</h2>
+        <OutlineForge className="docs-figure" aria-hidden="true" />
         <p>
           Write one item per line. End folder names with a slash and indent
           their children with two spaces. Press Tab in the editor to add two
@@ -49,6 +52,7 @@ export default function DocsPage() {
       <section id="interactive">
         <span className="eyebrow">03 / THE WORKSPACE</span>
         <h2>Everything in its place.</h2>
+        <ZipPress className="docs-figure" aria-hidden="true" />
         <p>
           The explorer updates as you type. Click folders to collapse them, or
           select a file to inspect its starter content. Fix any inline

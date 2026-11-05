@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { Files } from "@/components/ui/isometric/files";
-import { Keys } from "@/components/ui/isometric/keys";
-import { Laptop } from "@/components/ui/isometric/laptop";
-import { Stack } from "@/components/ui/isometric/stack";
+import { LocalVault } from "@/components/ui/isometric/local-vault";
+import { OutlineForge } from "@/components/ui/isometric/outline-forge";
+import { TemplateRack } from "@/components/ui/isometric/template-rack";
+import { TerminalScaffold } from "@/components/ui/isometric/terminal-scaffold";
 
 export default function LearnMore() {
   return (
@@ -23,22 +23,22 @@ export default function LearnMore() {
       <div className="template-grid">
         {[
           {
-            figure: Files,
+            figure: OutlineForge,
             title: "An outline is all it takes.",
             text: "Turn indented text into a real project structure. Preview folders as you type and catch mistakes before you export.",
           },
           {
-            figure: Stack,
+            figure: TemplateRack,
             title: "A thoughtful starting point.",
             text: "Choose a framework starter or begin with a blank canvas. Inspect generated file content, customize your outline, and download a ZIP.",
           },
           {
-            figure: Laptop,
+            figure: LocalVault,
             title: "Your workspace stays yours.",
             text: "Manual structure generation and ZIP export run in your browser. Drafts are stored on your device, without creating an account.",
           },
           {
-            figure: Keys,
+            figure: TerminalScaffold,
             title: "Built around your workflow.",
             text: "Use the browser for a visual workspace, or run the FileGen CLI from your terminal. Start where you feel at home.",
           },

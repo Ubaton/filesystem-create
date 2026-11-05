@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import {
-  SHEET, basic, clamp01, dashMat, ease, lineMat, pop, segments,
+  SHEET, basic, clamp01, ease, lineMat, pop, segments,
   sheetLabel, span, textPlane, tile, treeLayout,
 } from "./blueprint-scene/parts";
 
@@ -27,6 +27,7 @@ export function createBlueprintScene(host) {
   const accents = ACCENTS.map((c) => new THREE.Color(c));
   const neutral = new THREE.Color();
   const tint = new THREE.Color();
+  const fill = new THREE.Color();
   const textures = [];
   const top = SHEET.h / 2 + 0.004;
 
@@ -38,22 +39,21 @@ export function createBlueprintScene(host) {
   // ---- Three sheets ---------------------------------------------------------
   const sheetGeo = new THREE.BoxGeometry(SHEET.w, SHEET.h, SHEET.d);
   const sheetEdge = new THREE.EdgesGeometry(sheetGeo);
-  const tickGeo = segments([2.5, 0, -1.6, 2.95, 0, -1.6, 2.5, 0, 1.6, 2.95, 0, 1.6]);
   const layers = [0, 1, 2].map((index) => {
     const group = new THREE.Group();
     assembly.add(group);
-    const surface = new THREE.Mesh(sheetGeo, basic(0.08));
+    const surface = new THREE.Mesh(sheetGeo, basic(1));
     const outline = new THREE.LineSegments(sheetEdge, lineMat(0.6));
     const label = new THREE.Mesh(
       new THREE.PlaneGeometry(SHEET.w - 0.1, SHEET.d - 0.1).rotateX(-Math.PI / 2),
       new THREE.MeshBasicMaterial({ map: sheetLabel(index, textures), transparent: true, depthWrite: false }),
     );
     label.position.y = top;
-    const ticks = new THREE.LineSegments(tickGeo, lineMat(0.4));
-    group.add(surface, outline, label, ticks);
-    return { group, mats: [surface.material, outline.material, label.material, ticks.material], active: 0 };
+    group.add(surface, outline, label);
+    return { group, surface: surface.material, outline: outline.material, label: label.material, content: [], active: 0 };
   });
-  const tintables = (index, ...mats) => layers[index].mats.push(...mats);
+  const tintables = (index, ...mats) =>
+    layers[index].content.push(...mats.map((mat) => ({ mat, base: mat.opacity })));
 
   // Sheet 1: outline text "typing in" line by line.
   const codeBars = CODE_LINES.map(([indent, width], i) => {
@@ -103,18 +103,26 @@ export function createBlueprintScene(host) {
     return n;
   });
 
-  // Dimension line along the stack and dashed alignment guides.
-  const dimension = new THREE.LineSegments(segments([2.75, -1, -1.6, 2.75, 1, -1.6, -2.4, -1, 1.6, -2.4, 1, 1.6]), dashMat(0.35));
-  dimension.computeLineDistances();
-  assembly.add(dimension);
-
-  // Final beat: a ZIP envelope closes around the compressed stack.
-  const zipGeo = new THREE.BoxGeometry(SHEET.w + 0.35, 1, SHEET.d + 0.35);
+  // Final beat: a solid box grows under the top sheet, which becomes its lid.
+  const zipGeo = new THREE.BoxGeometry(SHEET.w, 1, SHEET.d);
+  const zipBody = new THREE.Mesh(zipGeo, new THREE.MeshBasicMaterial({
+    transparent: true, opacity: 0, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1,
+  }));
   const zipBox = new THREE.LineSegments(new THREE.EdgesGeometry(zipGeo), lineMat(0));
-  zipGeo.dispose();
   const zipLabel = textPlane("project.zip", textures);
-  zipLabel.rotation.x = -Math.PI / 2;
-  assembly.add(zipBox, zipLabel);
+  assembly.add(zipBody, zipBox, zipLabel);
+
+  // Painter's order, bottom layer first: nearer sheets simply cover farther ones.
+  layers.forEach((layer, i) => {
+    layer.group.traverse((o) => {
+      o.renderOrder = i * 2 + (o.material === layer.surface ? 0 : 1);
+      if (o.material) o.material.depthTest = false;
+    });
+  });
+  zipBody.renderOrder = 3.4;
+  zipBox.renderOrder = 3.5;
+  zipLabel.renderOrder = 3.6;
+  zipLabel.material.depthTest = false;
 
   // ---- State & loop --------------------------------------------------------
   let target = 0, shown = 0, time = 0, last = 0, raf = 0;
@@ -138,16 +146,16 @@ export function createBlueprintScene(host) {
     camera.updateProjectionMatrix();
 
     // Floors explode apart, then compress for the zip.
-    const gap = (0.7 + ease(span(p, 0, 0.45)) * 0.6) * (1 - 0.8 * zip);
+    const gap = (0.7 + ease(span(p, 0, 0.45)) * 0.6) * (1 - 0.92 * zip);
     layers.forEach((layer, i) => {
       layer.active = ease(clamp01(1 - Math.abs(p - i)));
       const lift = layer.active * 0.1 + Math.sin(time * 0.9 + i * 1.7) * 0.025 * idle * (1 - zip);
       layer.group.position.y = (i - 1) * gap + lift;
+      layer.group.visible = i === 2 || zip < 0.98;
     });
-    dimension.scale.y = gap;
 
     // Sheet 1 typing.
-    const typing = span(p, 0.02, 0.75);
+    const typing = span(p, -0.5, 0.45); // already part-written when the chapter opens
     let caretLine = 0;
     codeBars.forEach((bar, i) => {
       const t = span(typing * CODE_LINES.length, i, i + 1);
@@ -180,27 +188,38 @@ export function createBlueprintScene(host) {
       n.group.scale.set(n.base.x * s + 0.0001, 1, n.base.z * s + 0.0001);
     });
 
-    // Zip envelope.
+    // Zip box: its top stays under the lid while its bottom grows downward.
+    const lidUnder = layers[2].group.position.y - SHEET.h / 2;
+    const boxH = Math.max(0.001, zip * 0.72);
+    const boxY = lidUnder - boxH / 2;
+    fill.set(dark ? "#171b18" : "#ffffff");
+    zipBody.visible = zipBox.visible = zip > 0.001;
+    zipBody.position.y = zipBox.position.y = boxY;
+    zipBody.scale.y = zipBox.scale.y = boxH;
+    zipBody.material.opacity = zip;
+    zipBody.material.color.copy(fill);
     zipBox.material.opacity = zip * 0.9;
-    zipBox.scale.y = gap * 2 + 0.5;
-    zipLabel.material.opacity = zip;
-    zipLabel.position.set(-1.6, gap + 0.35, -SHEET.d / 2 - 0.05);
     zipBox.material.color.copy(accents[2]);
+    zipLabel.material.opacity = span(zip, 0.6, 1);
     zipLabel.material.color.copy(accents[2]);
+    zipLabel.position.set(-1.45, boxY, SHEET.d / 2 + 0.01);
 
-    // Theme-aware tinting: active floor glows in its accent, zip warms all.
+    // A sheet turns solid as the story reaches it; until then it is a faint outline.
     layers.forEach((layer, i) => {
-      tint.copy(neutral).lerp(accents[i], 0.2 + layer.active * 0.8).lerp(accents[2], zip * 0.35);
-      const strength = 0.35 + layer.active * 0.65 + zip * 0.3;
-      layer.mats.forEach((m, k) => {
-        m.color.copy(tint);
-        if (k === 0) m.opacity = 0.03 + layer.active * 0.09;
-        else if (k === 1) m.opacity = 0.25 + layer.active * 0.55;
-        else if (k === 2) m.opacity = 0.2 + layer.active * 0.5;
-        else if (k === 3) m.opacity = 0.35 * strength;
+      const built = ease(span(p, i - 0.6, i - 0.1));
+      const focus = built * (0.3 + layer.active * 0.7);
+      tint.copy(neutral).lerp(accents[i], 0.15 + layer.active * 0.85);
+      layer.surface.color.copy(fill).lerp(accents[i], layer.active * 0.08);
+      layer.surface.opacity = built;
+      layer.outline.color.copy(tint);
+      layer.outline.opacity = 0.16 + built * 0.2 + layer.active * 0.54;
+      layer.label.color.copy(tint);
+      layer.label.opacity = focus;
+      layer.content.forEach(({ mat, base }) => {
+        mat.color.copy(tint);
+        mat.opacity = base * focus;
       });
     });
-    dimension.material.color.copy(neutral);
     renderer.render(scene, camera);
   }
 
@@ -272,7 +291,7 @@ export function createBlueprintScene(host) {
       stop();
       observer?.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
-      const geometries = new Set([unitFace, unitEdge, barGeo, sheetGeo, sheetEdge, tickGeo]);
+      const geometries = new Set([unitFace, unitEdge, barGeo, sheetGeo, sheetEdge]);
       const materials = new Set();
       scene.traverse((o) => {
         if (o.geometry) geometries.add(o.geometry);

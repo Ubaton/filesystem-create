@@ -15,7 +15,7 @@ export const pop = (t) => {
 export const SHEET = { w: 4.8, d: 3.2, h: 0.12 };
 const TITLES = ["01 / OUTLINE", "02 / FILES & FOLDERS", "03 / PROJECT TREE"];
 
-/** Canvas texture with the sheet title, rule line, and corner registration marks. */
+/** Canvas texture with the sheet title and a rule line. */
 export function sheetLabel(index, textures) {
   const canvas = document.createElement("canvas");
   canvas.width = 1024;
@@ -30,16 +30,7 @@ export function sheetLabel(index, textures) {
   ctx.beginPath();
   ctx.moveTo(54, 88);
   ctx.lineTo(970, 88);
-  // Corner registration marks
-  [[24, 24], [1000, 24], [24, 656], [1000, 656]].forEach(([x, y]) => {
-    ctx.moveTo(x - 14, y);
-    ctx.lineTo(x + 14, y);
-    ctx.moveTo(x, y - 14);
-    ctx.lineTo(x, y + 14);
-  });
   ctx.stroke();
-  ctx.font = "18px monospace";
-  ctx.fillText(`SHEET ${index + 1}/3  ·  FILEGEN`, 760, 640);
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   textures.push(texture);
@@ -68,8 +59,6 @@ export function textPlane(text, textures, width = 1.6) {
 export const basic = (opacity) =>
   new THREE.MeshBasicMaterial({ transparent: true, opacity, depthWrite: false });
 export const lineMat = (opacity) => new THREE.LineBasicMaterial({ transparent: true, opacity });
-export const dashMat = (opacity) =>
-  new THREE.LineDashedMaterial({ transparent: true, opacity, dashSize: 0.06, gapSize: 0.07 });
 
 /** Line-segment geometry from flat [x1,y1,z1,x2,y2,z2,...] list. */
 export function segments(points) {

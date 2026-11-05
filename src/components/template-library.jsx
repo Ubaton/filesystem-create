@@ -13,6 +13,7 @@ import { examples } from "@/lib/structure";
 import { structures } from "@/templates/projectStructures";
 import { proStructure } from "@/templates/proProjectStuctres";
 import { toast } from "sonner";
+import { TemplateRack } from "@/components/ui/isometric/template-rack";
 const icons = [Braces, Layers, Code2, FolderTree];
 export default function TemplateLibrary() {
   const [search, setSearch] = useState("");
@@ -24,13 +25,16 @@ export default function TemplateLibrary() {
   );
   return (
     <div className="fg-container inner-page">
-      <div className="page-heading">
-        <span className="eyebrow">DON’T START FROM ZERO</span>
-        <h1>A head start for your next idea.</h1>
-        <p>
-          Thoughtful project outlines. Pick a starting point, then make it
-          yours.
-        </p>
+      <div className="heading-with-figure">
+        <div className="page-heading">
+          <span className="eyebrow">DON’T START FROM ZERO</span>
+          <h1>A head start for your next idea.</h1>
+          <p>
+            Thoughtful project outlines. Pick a starting point, then make it
+            yours.
+          </p>
+        </div>
+        <TemplateRack className="heading-figure" aria-hidden="true" />
       </div>
       <label className="template-search">
         <Search size={18} />
